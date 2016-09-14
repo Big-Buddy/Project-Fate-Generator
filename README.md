@@ -13,6 +13,6 @@ Documentation -
 
 https://www.lucidchart.com/
 
-https://login.microsoftonline.com/
+https://login.microsoftonline.com/ (Office 365)
 
 https://www.draw.io/
