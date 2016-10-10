@@ -8,83 +8,82 @@
 	<script type="text/javascript" src="js/user_reg.js"></script>
 </head>
 <body>
-	<div align="center" class = "containor">
+	<div align="center" class = "container">
 		
 		<div align="center" class="top">
 			<div style="overflow:auto" class="topNav">
 				<ul class="topNavLeft"><li class="navLeft"><a href="home.html">Concordia Scheduler</a></li></ul>
 				<ul class="topNavRight">
-					<li class="navRight"><a href="home.html">Log out</a></li>
+					
 					<li class="navRight"><a href="##.html">##</a></li>
 					<li class="navRight"><a href="##.html">##</a></li>
 				</ul><br><br>
 			</div>
 		</div>
-		<div align="center">
-			<div id="user_reg" align="center">
+		<div align="center" class="body">
+			<div class="user_reg" align="center">
 				<h1 >User Registration</h1>
-				<table id="reg">
-					<tr>
-						<td>
-							<form name="regF" action="#">
-								<table>
-									<tr><th>Please choose the user group</th></tr>
-									<tr>
-									<td>
-									<label><input type="radio" name="userGroup" value="Student" checked="checked"/>Student</label>
-									<label><input type="radio" name="userGroup" value="Staff"/>Staff</label>
-									</td>
-									</tr>
-								</table>
-								<table>
-									<tr>
-									<th>First Name:</th>
-									<td><input type="text" name="firstName" id="fNam" size="20" onchange="checkFN()"/></td>
-									<td><span id="checkedFN"></span></td>
-									</tr>
-									<tr>
-									<th>Last Name:</th>
-									<td><input type="text" name="lastName" id="lNam" size="20" onchange="checkLN()"/></td>
-									<td><span id="checkedLN"></span></td>
-									</tr>
-								
-									<tr>
-									<th>Phone number:</th>
-									<td><input type="tel" name="phoneNum" id="tel" value="(XXX)XXX-XXXX" size="20" onchange="checkPN()"/></td>
-									<td><span id="checkedPN"></span></td>
-									</tr>
-									<tr>
-									<th>Email Address:</th>
-									<td><input type="text" name="email" size="30" onchange="checkEM()"/></td>
-									<td><span id="checkedEM"></span></td>
-									</tr>
-								
-									<tr>
-									<th>Log In Name:</th>
-									<td><input type="text" name="account" size="30" onchange="checkAC()"/></td>
-									<td><span id="account"></span></td>
-									</tr>
-									<tr>
-									<th>Password:</th>
-									<td><input type="password" name="pw" id="pw1" size="24" onchange="checkPW1()"/></td>
-									<td><span id="pw"></span></td>
-									</tr>
-									<tr>
-									<th>Password Confirmation:</th>
-									<td><input type="password" name="pwConf" id="pw2" size="24" onchange="checkPW2()"/></td>
-									<td><span id="pwConf"></span></td>
-									</tr>
-								</table>
-								<table>
-									<tr>
-									<td><input type="reset" value="Reset" /></td>
-									<td><input type="submit" value="Submit" name="sub"/></td>
-									</tr>
-								</table>
-							</form>
-						</td>
-					</tr>
-				</table>
+				<div class="space">
+				</div>
+				<form name="regF" action="#">
+					<div class="main">
+					
+						<div class="content">
+							<div>
+								<label>Log In ID:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="text" name="account" onchange="checkAC()"/>
+							</div>
+						</div>
+						<div class="content">
+							<div>
+								<label>Password:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="password" name="pw" id="pw1" onchange="checkPW1()"/>
+							</div>
+							<div>
+								<label>Password Confirmation:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="password" name="pwConf" id="pw2"  onchange="checkPW2()"/>											
+							</div>
+						</div>
+						<div class="content">
+							<div>
+								<label>First Name:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="text" name="firstName" id="fNam"  onchange="checkFN()"/>
+							</div>
+							<div>
+								<label>Last Name:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="text" name="lastName" id="lNam"  onchange="checkLN()"/>
+							</div>
+							<div>
+								<label>Student ID:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="text" name="studentID" id="sID"  onchange="checkFN()"/>
+							</div>
+							<div>
+								<label>Email Address:</label>
+							</div>
+							<div>
+								<input class="textInPut" type="text" name="email"  onchange="checkEM()"/>
+							</div>
+						</div>
+						<div class="content">
+							<div>
+								<input class="button" type="reset" value="Reset" id="reset" />
+								<input class="button" type="submit" value="Register" id="register"/>
+							</div>
+						</div>
+					</div>
+				</form>
 			</div>
 		<div>
 	<div>

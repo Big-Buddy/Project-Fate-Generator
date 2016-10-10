@@ -1,0 +1,20 @@
+home/log in
+registration
+logged in - course sequence
+	  - schedule
+
+
+
+
+=============================================
+Questions:
+1. course sequence?? made by student? or offered by school?
+2. employee page?
+
+
+
+
+
+
+=============================================
+option features:
