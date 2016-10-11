@@ -81,6 +81,11 @@ h2{
 	font-size:20pt;
 	font-weight:600;
 }
+h3{
+	font-family:verdana,sans-serif;
+	margin:3px;
+	font-weight:600;
+}
 th,td{
 	font-family:Arial,sans-serif;
 	text-align:left;
