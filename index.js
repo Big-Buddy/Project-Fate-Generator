@@ -3,11 +3,7 @@ var app = express();
 
 app.set('port', (process.env.PORT || 5000));
 
-app.use(express.static(__dirname + '/src/CSS'));
-
-// views is directory for all template files
-app.set('views', __dirname + '/src');
-app.set('view engine', 'html');
+app.use(express.static(__dirname + '/src'));
 
 app.get('/', function(request, response) {
   response.render('home');
