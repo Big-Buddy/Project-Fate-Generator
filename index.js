@@ -5,8 +5,6 @@ var path = require('path');
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(path.join(__dirname + '/src')));
-app.use(express.static(path.join(__dirname, '/src/js')));
-app.use(express.static(path.join(__dirname, '/src/css')));
 
 app.get('/', function(request, response) {
   response.sendFile(path.join(__dirname + '/src/home.html'));
