@@ -4,10 +4,8 @@ var path = require('path');
 
 app.set('port', (process.env.PORT || 5000));
 
-app.use(express.static(__dirname + '/src'));
-
 app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname + '/home.html'));
+  response.sendFile(path.join(__dirname + '/src/home.html'));
 });
 
 app.listen(app.get('port'), function() {
