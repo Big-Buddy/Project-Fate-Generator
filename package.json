@@ -11,5 +11,8 @@
     "url": "https://github.com/Big-Buddy/Project-Fate-Generator.git"
   },
   "author": "Team Constellation - Alexandre Pelletier <a.pelletier0x7c9@gmail.com> (maintainer)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
 }
