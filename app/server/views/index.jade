@@ -1,0 +1,32 @@
+doctype html
+// Team Collestation
+// Made by Yefei Xue
+html
+  head(lang='en')
+    meta(charset='UTF-8')
+    title Concordia Scheduler
+    link(rel='stylesheet', type='text/css', href='../../public/css/general.css')
+    link(rel='stylesheet', type='text/css', href='../../public/css/index.css')
+    script(type='text/javascript', src='../../public/vendor/jquery.min.js')
+    script(type='text/javascript', src='../../public/js/form-validation/loginValidator.js')
+    script(type='text/javascript', src='../../public/js/controllers/loginController.js')
+  body
+    .container(align='center')
+      .body(align='center')
+        h2 Welcome to
+        h1 Concordia Scheduler
+      .main
+        .logIn(align='center')
+          form#form-login(,='', method='post')
+            .content
+              label.label User ID
+              div
+                input.textInput(type='text', name='user', onchange='checkAC()')
+            .content
+              label.label Password
+              div
+                input.textInput(type='Password', name='pass', onchange='checkAC()')
+            .space(style='{height:20px;}')
+            .content
+              input#login.button(type='submit', value='Log In')
+          button#register.button Register
