@@ -1,0 +1,48 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    title Concordia Scheduler
+    link(rel='stylesheet', type='text/css', href='/css/general.css')
+    link(rel='stylesheet', type='text/css', href='/css/user_reg.css')
+    script(type='text/javascript', src='/js/regValidator.js')
+  body
+    .container(align='center')
+      .top(align='center')
+        .topNav(style='overflow:auto')
+          ul.topNavLeft
+            li.navLeft
+              a(href='/') Concordia Scheduler
+          ul.topNavRight
+          br
+          br
+      .body(align='center')
+        .user_reg(align='center')
+          h1 User Registration
+          .space
+          form#form-reg(method='post')
+            .main
+              .content
+                div
+                  label Username:
+                div
+                  input.textInput(type='text', name='user', onchange='checkAC()')
+              .content
+                div
+                  label Password:
+                div
+                  input#pw1.textInput(type='password', name='pass', onchange='checkPW1()')
+                div
+                  label Password Confirmation:
+                div
+                  input#pw2.textInput(type='password', name='pwConf', onchange='checkPW2()')
+              .content
+                div
+                  label Email Address:
+                div
+                  input.textInput(type='text', name='email', onchange='checkEM()')
+              .content
+                div
+                  input#register.button(type='submit', value='Register')
+        div
+          div

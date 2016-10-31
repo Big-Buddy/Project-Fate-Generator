@@ -4,9 +4,10 @@ module.exports = function(app)
 {
 	app.get('/', function (req, res)
 	{
+		console.log('req received for index');
 		if (req.cookies.user == undefined || req.cookies.pass == undefined)
 		{
-			res.sendFile(__dirname + '/views/index.html');
+			res.render('index');
 		}
 		else
 		{
@@ -14,13 +15,13 @@ module.exports = function(app)
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o)
 			{
 				if (o != null)
-				{
+				{ 
 					req.session.user = o;
-					res.redirect('/views/user_prof.html');
+					res.redirect('/user_prof');
 				}
 				else
 				{
-					res.sendFile(__dirname + '/views/index.html');
+					res.render('index');
 				}
 			});
 		}
@@ -47,23 +48,11 @@ module.exports = function(app)
 		});
 	});
 
-	app.get('/user_prof', function(req, res) {
-		if (req.session.user == null)
-		{
-			// if user is not logged-in redirect back to login page //
-			res.redirect('/');
-		}	
-		else
-		{
-			res.sendFile(__dirname + '/views/user_prof.html');
-		}
-	});
-
-	app.get('/user_reg'), function(req, res)
+	app.get('/user_reg', function(req, res)
 	{
 		console.log('req received for user_reg');
-		res.sendFile(__dirname + '/views/user_reg.html');
-	}
+		res.render('user_reg');
+	});
 
 	app.post('/user_reg', function(req, res)
 	{
@@ -71,17 +60,30 @@ module.exports = function(app)
 			user : req.body['user'],
 			pass : req.body['pass'],
 			email : req.body['email']
-		}, function(e)
+		}, function(err)
 		{
-			if (e)
+			if (err)
 			{
-				res.status(400).send(e);
+				res.status(400).send(err);
 			}
 			else
 			{
 				res.status(200).send('ok');
 			}
 		});
+	});
+
+	app.get('/user_prof', function(req, res) {
+		console.log('req received for user_prof');
+		if (req.session.user == null)
+		{
+			// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	
+		else
+		{
+			res.render('user_prof');
+		}
 	});
 
 };

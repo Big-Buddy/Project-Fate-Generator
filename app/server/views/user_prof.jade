@@ -1,0 +1,60 @@
+doctype html
+html
+  head
+    meta(charset='UTF-8')
+    title Concordia Scheduler
+    link(rel='stylesheet', type='text/css', href='/css/general.css')
+    link(rel='stylesheet', type='text/css', href='/css/scheduler.css')
+    script(type='text/javascript', src='/js/scheduler.js')
+  body
+    .containor(align='center')
+      .top(align='center')
+        .topNav(style='overflow:auto')
+          ul.topNavLeft
+            li.navLeft
+              a(href='index.html') Concordia Scheduler
+          ul.topNavRight
+            li.navRight
+              a(href='index.html') Log out
+            li.navRight
+              a(href='cSchedule.html') Course Schedule
+            li.navRight
+              a(href='cSequence.html') Course Sequence
+            li.navRight
+              a(href='scheduler.html') Scheduler
+          br
+          br
+      div(align='center')
+        .cSequence(align='center')
+          h1 Scheduler
+        div
+          table
+            tr
+              td.Profiles
+                div
+                  .space(style='{height:50px;}')
+                  div
+                    label Profiles
+                  .profiles
+                    div
+                      h2
+                        | David Scott
+                        h2
+                    .class
+                      label Administrator
+                    div
+                      label Faculty of major
+                      br
+                      label Software Engineering
+                    div
+                      label ID
+                      label 26######
+              td
+                div(align='center')
+                  h3 Scheduler
+                  div
+                    table.schedulerBox
+                      tr
+                        td
+        div
+          div

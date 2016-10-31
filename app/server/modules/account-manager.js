@@ -58,7 +58,7 @@ exports.manualLogin = function(user, pass, callback)
 			{
 				if (res)
 				{
-					callback(null, o);
+					callback(null, userCredentials);
 				}	
 				else
 				{
@@ -104,7 +104,7 @@ exports.addAccount = function(newData, callback)
 							}
 							else
 							{
-								client.query('INSERT INTO public.users(user_name, user_password, user_email) VALUES ( ' + newData.user + ',' + newData.pass + ',' + newData.email + ')', function(err, res)
+								client.query('INSERT INTO public.users(user_name, user_password, user_email) VALUES (\'' + newData.user + '\',\'' + newData.pass + '\',\'' + newData.email + '\')', function(err, res)
 								{
 									if (err)
 									{
@@ -113,6 +113,7 @@ exports.addAccount = function(newData, callback)
 									else
 									{
 										console.log('User successfully added.');
+										callback();
 									}
 								});
 							} 
@@ -123,6 +124,11 @@ exports.addAccount = function(newData, callback)
 		}
 	});
 };
+
+//TO-DO update account info
+//TO-DO update password
+
+//BASIC PASSWORD ENCRYPTION
 
 var saltAndHash = function(pass, callback)
 {
@@ -140,6 +146,14 @@ var validatePassword = function(plainPass, hashedPass, callback)
 var md5 = function(str) {
 	return crypto.createHash('md5').update(str).digest('hex');
 }
-//TO-DO update account info
-//TO-DO update password
 
+var generateSalt = function()
+{
+	var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
+	var salt = '';
+	for (var i = 0; i < 10; i++) {
+		var p = Math.floor(Math.random() * set.length);
+		salt += set[p];
+	}
+	return salt;
+}
