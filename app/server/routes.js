@@ -4,7 +4,6 @@ module.exports = function(app)
 {
 	app.get('/', function (req, res)
 	{
-		console.log('req received for index');
 		if (req.cookies.user == undefined || req.cookies.pass == undefined)
 		{
 			res.render('index');
@@ -38,19 +37,34 @@ module.exports = function(app)
 			else 
 			{
 				req.session.user = o;
-				if (req.body['remember-me'] == 'true')
+
+				//TO IMPLEMENT - Remember-me button
+				/*if (req.body['remember-me'] == 'true')
 				{
-					res.cookie('user', o.user, {maxAge: 90000});
-					res.cookie('pass', o.pass, {maxAge: 90000});
-				}
+					res.cookie('user', o.user_name, {maxAge: 90000});
+					res.cookie('pass', o.user_password, {maxAge: 90000});
+				}*/
+
 				res.status(200).send(o);
 			}
 		});
 	});
 
+	app.get('/user_prof', function(req, res) 
+	{
+		if (req.session.user == null)
+		{
+			// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	
+		else
+		{
+			res.render('montrealInSummer');
+		}
+	});
+
 	app.get('/user_reg', function(req, res)
 	{
-		console.log('req received for user_reg');
 		res.render('user_reg');
 	});
 
@@ -68,22 +82,13 @@ module.exports = function(app)
 			}
 			else
 			{
-				res.status(200).send('ok');
+				res.status(200).send('The account was added!');
 			}
 		});
 	});
 
-	app.get('/user_prof', function(req, res) {
-		console.log('req received for user_prof');
-		if (req.session.user == null)
-		{
-			// if user is not logged-in redirect back to login page //
-			res.redirect('/');
-		}	
-		else
-		{
-			res.render('user_prof');
-		}
+	app.get('/montrealInSummer', function(req, res)
+	{
+		res.render('montrealInSummer');
 	});
-
 };

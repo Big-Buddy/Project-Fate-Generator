@@ -34,66 +34,77 @@ pool.connect(function(err, client)
 //attempt autologin
 exports.autoLogin = function(user, pass, callback)
 {
-	accounts.find({user_name: user}, function(o)
+	var holdData;
+
+	accounts.find(function(userCredentials)
 	{
-		if(o)
+		if(userCredentials.user_name === user)
 		{
+			holdData = userCredentials;
 			o.user_pass == pass ? callback(o) : callback(null);
 		}
-		else
-		{
-			callback(null);
-		}
 	});
+
+	if (holdData)
+	{
+		holdData.user_pass === pass ? callback(holdData) : callback(null);
+	}
 };
 
 //manual login
 exports.manualLogin = function(user, pass, callback)
 {
+	var holdData;
+
 	accounts.find(function(userCredentials)
 	{
 		if (userCredentials.user_name === user)
 		{
-			validatePassword(pass, userCredentials.user_password, function(err, res) 
+			holdData = userCredentials;
+		}	
+	});
+
+	if (holdData)
+	{
+		validatePassword(pass, holdData.user_password, function(err, res) 
 			{
 				if (res)
 				{
-					callback(null, userCredentials);
+					callback(null, holdData);
 				}	
 				else
 				{
 					callback('invalid-password');
 				}
 			});
-		}	
-		else
-		{
-			callback('user-not-found');
-			
-		}
-	});
+	}
+	else
+	{
+		callback('user-not-found');
+	}
+	
 };
 
 //account registration
 exports.addAccount = function(newData, callback)
 {
+	var holdData;
+
 	accounts.find(function(userCredentials) 
 	{
-		if (userCredentials.user_name === newData.user)
+		if (userCredentials.user_name === newData.user || userCredentials.user_email === newData.email)
 		{
-			callback('username-taken');
+			holdData = userCredentials;
 		}	
-		else
-		{
-			accounts.find(function(userCredentials) 
-			{
-				if (userCredentials.email === newData.email)
-				{
-					callback('email-taken');
-				}	
-				else
-				{
-					saltAndHash(newData.pass, function(hash)
+	});
+
+	if (holdData)
+	{
+		holdData.user_name === newData.user ? callback('username-taken') : callback('email-taken');
+	}
+	else
+	{
+		saltAndHash(newData.pass, function(hash)
 					{
 						newData.pass = hash;
 						pool.connect(function(err, client)
@@ -113,13 +124,31 @@ exports.addAccount = function(newData, callback)
 									else
 									{
 										console.log('User successfully added.');
+										updateAccounts(pool);
 										callback();
 									}
 								});
 							} 
 						});
 					});
-				}
+	}
+};
+
+//Update Accounts list after new account creation
+
+var updateAccounts = function(pool)
+{
+	pool.connect(function(err, client)
+	{
+		if (err) 
+		{
+			return console.error('error fetching client from pool', err);
+		} 
+		else
+		{
+			client.query('SELECT * FROM public.users', function(err, res)
+			{
+				accounts = res.rows;
 			});
 		}
 	});
@@ -141,6 +170,7 @@ var validatePassword = function(plainPass, hashedPass, callback)
 	var salt = hashedPass.substr(0, 10);
 	var validHash = salt + md5(plainPass + salt);
 	callback(null, hashedPass === validHash);
+	return;
 };
 
 var md5 = function(str) {

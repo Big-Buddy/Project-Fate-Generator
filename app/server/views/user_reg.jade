@@ -5,7 +5,11 @@ html
     title Concordia Scheduler
     link(rel='stylesheet', type='text/css', href='/css/general.css')
     link(rel='stylesheet', type='text/css', href='/css/user_reg.css')
-    script(type='text/javascript', src='/js/regValidator.js')
+    script(type='text/javascript', src='/vendor/jquery.min.js')
+    script(type='text/javascript', src='/vendor/jquery.form.min.js')
+    script(type='text/javascript', src='/js/views/user_reg.js')
+    script(type='text/javascript', src='/js/form-validation/regValidator.js')
+
   body
     .container(align='center')
       .top(align='center')
@@ -20,27 +24,27 @@ html
         .user_reg(align='center')
           h1 User Registration
           .space
-          form#form-reg(method='post')
+          form#reg(method='post')
             .main
               .content
                 div
                   label Username:
                 div
-                  input.textInput(type='text', name='user', onchange='checkAC()')
+                  input.textInput(type='text', name='user', id='user')
               .content
                 div
                   label Password:
                 div
-                  input#pw1.textInput(type='password', name='pass', onchange='checkPW1()')
+                  input.textInput(type='password', name='pass', id='pass')
                 div
                   label Password Confirmation:
                 div
-                  input#pw2.textInput(type='password', name='pwConf', onchange='checkPW2()')
+                  input.textInput(type='password', name='pwConf', id='pass-cf')
               .content
                 div
                   label Email Address:
                 div
-                  input.textInput(type='text', name='email', onchange='checkEM()')
+                  input.textInput(type='text', name='email', id='email')
               .content
                 div
                   input#register.button(type='submit', value='Register')

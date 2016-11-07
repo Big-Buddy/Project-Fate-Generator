@@ -8,8 +8,11 @@ html
     link(rel='stylesheet', type='text/css', href='/css/general.css')
     link(rel='stylesheet', type='text/css', href='/css/index.css')
     script(type='text/javascript', src='/vendor/jquery.min.js')
-    script(type='text/javascript', src='/js/form-validation/loginValidator.js')
+    script(type='text/javascript', src='/vendor/jquery.form.min.js')
+    script(type='text/javascript', src='/js/views/index.js')
     script(type='text/javascript', src='/js/controllers/loginController.js')
+    script(type='text/javascript', src='/js/form-validation/loginValidator.js')
+
   body
     .container(align='center')
       .body(align='center')
@@ -17,15 +20,15 @@ html
         h1 Concordia Scheduler
       .main
         .logIn(align='center')
-          form#form-login(,='', method='post')
+          form#login(,='', method='post')
             .content
               label.label User ID
               div
-                input.textInput(type='text', name='user', onchange='checkAC()')
+                input.textInput(type='text', name='user', id='user')
             .content
               label.label Password
               div
-                input.textInput(type='Password', name='pass', onchange='checkAC()')
+                input.textInput(type='Password', name='pass', id='pass')
             .space(style='{height:20px;}')
             .content
               input#login.button(type='submit', value='Log In')
