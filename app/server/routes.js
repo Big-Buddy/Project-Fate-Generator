@@ -59,7 +59,7 @@ module.exports = function(app)
 		}	
 		else
 		{
-			res.render('montrealInSummer');
+			res.render('user_prof');
 		}
 	});
 

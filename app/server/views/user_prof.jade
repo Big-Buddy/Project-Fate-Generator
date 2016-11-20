@@ -1,60 +1,139 @@
 doctype html
+
 html
-  head
-    meta(charset='UTF-8')
-    title Concordia Scheduler
-    link(rel='stylesheet', type='text/css', href='/css/general.css')
-    link(rel='stylesheet', type='text/css', href='/css/scheduler.css')
-    script(type='text/javascript', src='/js/scheduler.js')
-  body
-    .containor(align='center')
-      .top(align='center')
-        .topNav(style='overflow:auto')
-          ul.topNavLeft
-            li.navLeft
-              a(href='index.html') Concordia Scheduler
-          ul.topNavRight
-            li.navRight
-              a(href='index.html') Log out
-            li.navRight
-              a(href='cSchedule.html') Course Schedule
-            li.navRight
-              a(href='cSequence.html') Course Sequence
-            li.navRight
-              a(href='scheduler.html') Scheduler
-          br
-          br
-      div(align='center')
-        .cSequence(align='center')
-          h1 Scheduler
-        div
-          table
-            tr
-              td.Profiles
-                div
-                  .space(style='{height:50px;}')
-                  div
-                    label Profiles
-                  .profiles
-                    div
-                      h2
-                        | David Scott
-                        h2
-                    .class
-                      label Administrator
-                    div
-                      label Faculty of major
-                      br
-                      label Software Engineering
-                    div
-                      label ID
-                      label 26######
-              td
-                div(align='center')
-                  h3 Scheduler
-                  div
-                    table.schedulerBox
-                      tr
-                        td
-        div
-          div
+	head
+		title User Profile
+		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
+
+	body
+		block content
+			nav.navbar.navbar-default
+				div.container
+					div.narbar-header
+						a(href='/user_prof')
+							img.navbar-brand(src='/img/logo.png', alt='Project Fate Generator')
+					div.collapse.navbar-collapse
+						ul.nav.navbar-nav.navbar-right
+							li
+								button.navbar-btn.btn-primary#logout_btn Log Out	 									
+			div.body-container					
+				div.container
+					div.row
+						div.col-sm-9							
+							div.page-header
+								h2 Preferences
+							p Adjust the preferences below to modify the sequence that is generated.
+							form#preferences.form-horizontal(method='post')
+								div.form-group
+									label.col-md-3.control-label Starting Semester
+									div.col-md-7
+										label.radio-inline
+											input#starting_semester_fall(type='radio', name='starting_semester', value='1', checked)
+											| Fall
+										label.radio-inline
+											input#starting_semester_fall(type='radio', name='starting_semester', value='2')
+											| Winter		
+								div.form-group
+									label.col-md-3.control-label Summer Classes?
+									div.col-md-7
+										label.radio-inline
+											input(type='radio', name='summer_opt', id='summer_yes')
+											| Yes
+										label.radio-inline
+											input(type='radio', name='summer_opt', id='summer_no', checked)
+											| No
+								div.form-group
+									div.col-md-7.col-md-offset-3
+										button.btn.btn-primary(type='submit') Update
+							div.page-header
+								h2 Electives
+							p Select your desired electives from the lists below.
+							form#electiveList(method='post')
+								div.panel-group#accordion
+									div.panel.panel-success#elective_1
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', data-parent='#accordion', href='#elective_1')
+													div.pull-left
+														i.fa.fa-chevron-down
+														| Science Electives
+													div.pull-right
+														strong
+															| Choose
+															span#classes-remaining-1 2
+															| more
+													div.clearfix
+										div.panel-collapse.collapse#electives-list-1(aria-expanded='false')
+											ul.list-group
+									div.panel.panel-success#elective_2
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', data-parent='#accordion', href='#elective_1')
+													div.pull-left
+														i.fa.fa-chevron-down
+														| General Electives
+													div.pull-right
+														strong
+															| Choose
+															span#classes-remaining-2 1
+															| more
+													div.clearfix
+										div.panel-collapse.collapse#electives-list-1(aria-expanded='false')
+											ul.list-group
+									div.panel.panel-success#elective_3
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', data-parent='#accordion', href='#elective_1')
+													div.pull-left
+														i.fa.fa-chevron-down
+														| Program Electives
+													div.pull-right
+														strong
+															| Choose
+															span#classes-remaining-3 5
+															| more
+													div.clearfix
+										div.panel-collapse.collapse#electives-list-1(aria-expanded='false')
+											ul.list-group
+								button.btn.btn-primary(type='submit') Update
+							div.page-header
+								h2 Completed Courses
+							p Add courses that you've completed to this list to omit them from sequence generation.
+							table.table
+								thead
+									tr
+										th Course
+										th Type
+								tbody
+									tr
+										td(colspan='2') You have no completed courses.
+							form#addCourse.form-inline(method='post')
+								div.form-group
+									
+									span.twitter-typeadhead(style='display:inline-block; position: relative;')
+										input.form-control.tt-hint(type='text', readonly autocomplete='off' spellcheck='false', tabindex='-1', dir='ltr', style='position: absolute; top: 0px; left: 0px;')
+										input#add-courses.form-control.tt-input(type='text', placeholder='ex: COMP248', autocomplete='off', spellcheck='false', dir='auto', style='position:relative; vertical-align:top;')
+										pre(aria-hidden='true' style='position:absolute; visibility:hidden; white-space:pre;')
+										div.tt-menu.tt-empty
+											div.tt-dataset.tt-dataset-courses
+								button.btn.btn-default Add
+							div.page-header
+								h2 Password Change
+							p Change your password here.
+							form#changePassword.form-horizontal(method='post')
+								div.form-group
+									label.col-md-3.control-label Password
+									div.col-md-7
+										input.form-control(type='password', name='pass')
+								div.form-group
+									label.col-md-3.control-label Confirm Password
+									div.col-md-7
+										input.form-control(type='password', name='pwConf')
+								div.form-group
+									div.col-md-7.col-md-offset-3
+										button.btn.btn-primary(type='submit') Change Password
+
+		block scripts 
+			script(src='/vendor/jquery-2.2.3.min.js')
+			script(src='/vendor/jquery.form.min.js')
+			script(src='/vendor/bootstrap.min.js')

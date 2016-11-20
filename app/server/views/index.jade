@@ -1,36 +1,38 @@
 doctype html
-// Team Collestation
-// Made by Yefei Xue
+
 html
-  head(lang='en')
-    meta(charset='UTF-8')
-    title Concordia Scheduler
-    link(rel='stylesheet', type='text/css', href='/css/general.css')
-    link(rel='stylesheet', type='text/css', href='/css/index.css')
-    script(type='text/javascript', src='/vendor/jquery.min.js')
-    script(type='text/javascript', src='/vendor/jquery.form.min.js')
-    script(type='text/javascript', src='/js/views/index.js')
-    script(type='text/javascript', src='/js/controllers/loginController.js')
-    script(type='text/javascript', src='/js/form-validation/loginValidator.js')
+	head(lang='en')
+		meta(charset='UTF-8')
+		title Project Fate Generator
+		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
+		script(type='text/javascript', src='/vendor/jquery.min.js')
+		script(type='text/javascript', src='/vendor/jquery.form.min.js')
+		script(type='text/javascript', src='/js/views/index.js')
+		script(type='text/javascript', src='/js/controllers/loginController.js')
+		script(type='text/javascript', src='/js/form-validation/loginValidator.js')
 
-  body
-    .container(align='center')
-      .body(align='center')
-        h2 Welcome to
-        h1 Concordia Scheduler
-      .main
-        .logIn(align='center')
-          form#login(,='', method='post')
-            .content
-              label.label User ID
-              div
-                input.textInput(type='text', name='user', id='user')
-            .content
-              label.label Password
-              div
-                input.textInput(type='Password', name='pass', id='pass')
-            .space(style='{height:20px;}')
-            .content
-              input#login.button(type='submit', value='Log In')
-          button#register.button Register
-
+	body
+		nav.navbar.navbar-default
+			div.container
+				div.narbar-header
+					a(href='/')
+							img.img-responsive(src='/img/logo.png', alt='Project Fate Generator')
+		div.body-container
+			div.container
+				div.row
+					div.col-md-8.col-md-offset-1
+						div.panel
+							div.panel-body					
+								form#login.form-horizontal(method='post')
+									div.form-group
+										label.col-md-4.control-label Username
+										div.col-md-6
+											input.form-control(type='text', name='user', id='user')
+									div.form-group
+										label.col-md-4.control-label Password
+										div.col-md-6
+											input.form-control(type='Password', name='pass', id='pass')
+									div.form-group
+										div.col-md-6.col-md-offset-4
+											button#login.btn.btn-default.btn-lg(type='submit') LOGIN
+											button#register.btn.btn-default.btn-lg(type='button') REGISTER
