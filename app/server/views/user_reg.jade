@@ -3,7 +3,7 @@ html
   head
     meta(charset='UTF-8')
     title Concordia Scheduler
-    link(rel='stylesheet', type='text/css', href='/css/general.css')
+    link(rel='stylesheet', type='text/css', href='/vendor/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='/css/user_reg.css')
     script(type='text/javascript', src='/vendor/jquery.min.js')
     script(type='text/javascript', src='/vendor/jquery.form.min.js')
@@ -47,6 +47,6 @@ html
                   input.textInput(type='text', name='email', id='email')
               .content
                 div
-                  input#register.button(type='submit', value='Register')
+                  input#register.btn.btn-default.btn-lg(type='submit', value='Register')
         div
           div
