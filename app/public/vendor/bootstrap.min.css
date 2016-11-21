@@ -4008,6 +4008,7 @@ to {
     display: block;
     padding: 10px 15px;
     margin-bottom: -1px;
+    color:black;
     background-color: #fff;
     border: 1px solid #ddd;
 }
