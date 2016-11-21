@@ -30,7 +30,7 @@ html
 							form#userProfile.form-horizontal(method='post')
 								div.form-group
 									div.col-md-7
-										button.btn.btn-success.btn-lg GENERATE SEQUENCE!					
+										button.btn.btn-success.btn-lg GENERATE SEQUENCE!			
 								div.page-header
 									h2 Preferences
 								p Adjust the preferences below to modify the sequence that is generated.
@@ -72,7 +72,10 @@ html
 														div.clearfix
 											div#electives-list-1.panel-collapse.collapse
 												ul.list-group
-													li.list-group-item FUUUUUUCK
+													each Course in courseList[0]
+														li.list-group-item(id="elective"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.panel-group
 										div.panel.panel-danger
 											div.panel-heading
@@ -89,7 +92,10 @@ html
 														div.clearfix
 											div#electives-list-2.panel-collapse.collapse
 												ul.list-group
-													li.list-group-item FUUUUUUCK
+													each Course in courseList[1]
+														li.list-group-item(id="elective"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.panel-group
 										div.panel.panel-danger
 											div.panel-heading
@@ -106,7 +112,10 @@ html
 														div.clearfix
 											div#electives-list-3.panel-collapse.collapse
 												ul.list-group
-													li.list-group-item FUUUUUUCK
+													each Course in courseList[2]
+														li.list-group-item(id="elective"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.page-header
 										h2 Completed Courses
 									p Add courses that you've completed to this list to omit them from sequence generation.

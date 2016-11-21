@@ -1,6 +1,56 @@
 var AM = require('./modules/account-manager');
+<<<<<<< HEAD
 var PM = require('./modules/profile-manager');
 var CL = require('./modules/course-list');
+=======
+var pg = require('pg');
+//var CL = require('./modules/course-list');
+
+var Electives=[3];
+var config = {
+	user: 'zzbygkffahkpgs',
+	database: 'da0j4pvoutaat3',
+	password: 'BspcDxUsbS1jlNylTPGE-_57bV',
+	host: 'ec2-23-21-100-145.compute-1.amazonaws.com',
+	port: '5432',
+	max: 10,
+	idleTimeoutMillis: 3000,
+};
+
+pg.defaults.ssl = true;
+var pool = new pg.Pool(config);
+
+//get all existing accounts
+pool.connect(function(err, client)
+{
+	if (err) 
+	{
+		return console.error('error fetching client from pool', err);
+	} 
+	else
+	{
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 1, function(err, res)
+		{
+			Electives[0] = res.rows;
+			console.log(Electives[0]);
+			console.log("End of query for 1");
+		});
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 2, function(err, res)
+		{
+			Electives[1] = res.rows;
+			console.log(Electives[1]);
+			console.log("End of query for 2");
+		});
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 3, function(err, res)
+		{
+			Electives[2] = res.rows;
+			console.log(Electives[2]);
+			console.log("End of query for 3");
+		});
+	}
+});
+
+>>>>>>> 43b97dfb204cf30799d4f01fb8c45b619bb4b356
 
 module.exports = function(app)
 {
@@ -60,7 +110,8 @@ module.exports = function(app)
 		}	
 		else
 		{
-			res.render('user_prof');
+			console.log("in user_prof render");
+			res.render('user_prof', {courseList:Electives});
 		}
 	});
 
