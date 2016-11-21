@@ -1,8 +1,4 @@
 var AM = require('./modules/account-manager');
-<<<<<<< HEAD
-var PM = require('./modules/profile-manager');
-var CL = require('./modules/course-list');
-=======
 var pg = require('pg');
 //var CL = require('./modules/course-list');
 
@@ -50,6 +46,9 @@ pool.connect(function(err, client)
 	}
 });
 
+<<<<<<< HEAD
+>>>>>>> 43b97dfb204cf30799d4f01fb8c45b619bb4b356
+=======
 >>>>>>> 43b97dfb204cf30799d4f01fb8c45b619bb4b356
 
 module.exports = function(app)
