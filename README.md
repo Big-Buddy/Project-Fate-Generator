@@ -1,6 +1,8 @@
 # Project-Fate-Generator
 This is our project - Kappa.
 
+project-fate-generator.herokuapp.com
+
 Resources:
 
 Coders - 
