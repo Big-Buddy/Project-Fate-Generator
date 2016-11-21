@@ -55,52 +55,57 @@ html
 									div.page-header
 										h2 Electives
 									p Select your desired electives from the lists below.
-										div.panel-group#accordion
-											div.panel.panel-danger#elective_1
-												div.panel-heading
-													h4.panel-title
-														a(data-toggle='collapse', data-parent='#accordion', href='#elective_1')
-															div.pull-left
-																span.glyphicon.glyphicon-chevron-down
-																|    Science Electives
-															div.pull-right
-																strong
-																	| Choose
-																	span#classes-remaining-1 2
-																	| more
-															div.clearfix
-												div.panel-collapse.collapse#electives-list-1(aria-expanded='false')
-													ul.list-group
-											div.panel.panel-danger#elective_2
-												div.panel-heading
-													h4.panel-title
-														a(data-toggle='collapse', data-parent='#accordion', href='#elective_2')
-															div.pull-left
-																span.glyphicon.glyphicon-chevron-down
-																|    General Electives
-															div.pull-right
-																strong
-																	| Choose
-																	span#classes-remaining-2 1
-																	| more
-															div.clearfix
-												div.panel-collapse.collapse#electives-list-2(aria-expanded='false')
-													ul.list-group
-											div.panel.panel-danger#elective_3
-												div.panel-heading
-													h4.panel-title
-														a(data-toggle='collapse', data-parent='#accordion', href='#elective_3')
-															div.pull-left
-																span.glyphicon.glyphicon-chevron-down
-																|    Program Electives
-															div.pull-right
-																strong
-																	| Choose
-																	span#classes-remaining-3 5
-																	| more
-															div.clearfix
-												div.panel-collapse.collapse#electives-list-3(aria-expanded='false')
-													ul.list-group
+									div.panel-group
+										div.panel.panel-danger
+											div.panel-heading
+												h4.panel-title
+													a(data-toggle='collapse', href='#electives-list-1')
+														div.pull-left
+															i.glyphicon.glyphicon-chevron-down
+															|   SCIENCE ELECTIVES
+														div.pull-right
+															strong
+																|(Choose
+																span#class-remaining-1 1
+																| more)
+														div.clearfix
+											div#electives-list-1.panel-collapse.collapse
+												ul.list-group
+													li.list-group-item FUUUUUUCK
+									div.panel-group
+										div.panel.panel-danger
+											div.panel-heading
+												h4.panel-title
+													a(data-toggle='collapse', href='#electives-list-2')
+														div.pull-left
+															i.glyphicon.glyphicon-chevron-down
+															|   GENERAL ELECTIVES
+														div.pull-right
+															strong
+																|(Choose
+																span#class-remaining-1 5
+																| more)
+														div.clearfix
+											div#electives-list-2.panel-collapse.collapse
+												ul.list-group
+													li.list-group-item FUUUUUUCK
+									div.panel-group
+										div.panel.panel-danger
+											div.panel-heading
+												h4.panel-title
+													a(data-toggle='collapse', href='#electives-list-3')
+														div.pull-left
+															i.glyphicon.glyphicon-chevron-down
+															|   PROGRAM ELECTIVES
+														div.pull-right
+															strong
+																|(Choose
+																span#class-remaining-1 2
+																| more)
+														div.clearfix
+											div#electives-list-3.panel-collapse.collapse
+												ul.list-group
+													li.list-group-item FUUUUUUCK
 									div.page-header
 										h2 Completed Courses
 									p Add courses that you've completed to this list to omit them from sequence generation.
