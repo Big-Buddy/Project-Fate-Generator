@@ -1,11 +1,11 @@
-//validation before submit and redirection after
 $(document).ready(function()
 {
-	var validator = new regValidator();
+	var validator = new changeValidator();
 
-	$('#reg').ajaxForm({
+	$("#changePassword").ajaxForm({
 		beforeSubmit : function(formData, jqForm, options)
 		{
+			console.log('lol');
 			if (validator.validateForm() == false)
 			{
 				return false;
@@ -20,11 +20,12 @@ $(document).ready(function()
 			if (status == 'success')
 			{
 				alert(responseText);
-			}
+				window.location.href = '/';
+			} 
 		},
 		error: function(err)
 		{
-			alert('Failed to add account.')
+			alert('Failed to change password.');
 		}
 	});
 });

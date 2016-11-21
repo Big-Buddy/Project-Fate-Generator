@@ -134,8 +134,56 @@ exports.addAccount = function(newData, callback)
 	}
 };
 
-//Update Accounts list after new account creation
+//Change the user's password.
+exports.changePassword = function(user, newPass, callback)
+{
+	var holdData;
 
+	accounts.find(function(userCredentials) 
+	{
+		if (userCredentials.user_name === user.user_name)
+		{
+			holdData = userCredentials;
+		}	
+	});
+
+	if (holdData)
+	{
+		saltAndHash(newPass, function(hash)
+		{
+			holdData.pass = hash;
+			pool.connect(function(err, client)
+						{
+							if (err) 
+							{
+								return console.error('error fetching client from pool', err);
+							}
+							else
+							{
+								client.query('UPDATE public.users SET user_password = \'' + holdData.pass + '\' WHERE user_id = ' + holdData.user_id + ';', function(err, res)
+								{
+									if (err)
+									{
+										console.log('Failed to update password of ' + holdData.user_name + ' in database.');
+									}
+									else
+									{
+										console.log('User\'s password successfully changed.');
+										updateAccounts(pool);
+										callback(null, holdData);
+									}
+								});
+							} 
+						});
+		});		
+	}
+	else
+	{
+		callback('Couldn\'t find user to change password.', null)
+	}
+}
+
+//Update Accounts list after new account creation
 var updateAccounts = function(pool)
 {
 	pool.connect(function(err, client)
@@ -154,10 +202,9 @@ var updateAccounts = function(pool)
 	});
 };
 
-//TO-DO update account info
-//TO-DO update password
+//TO-DO save user preferences
 
-//BASIC PASSWORD ENCRYPTION
+//BASIC PASSWORD ENCRYPTION------------------------
 
 var saltAndHash = function(pass, callback)
 {

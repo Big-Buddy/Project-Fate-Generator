@@ -17,7 +17,6 @@ $(document).ready(function()
 		},
 		success : function(responseText, status, xhr, $form)
 		{
-			//CHANGE ONCE USER PROF IS GOOD TO GO
 			if (status == 'success') window.location.href = '/user_prof';
 		},
 		error: function(err)

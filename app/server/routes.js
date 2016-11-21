@@ -37,7 +37,6 @@ module.exports = function(app)
 			else 
 			{
 				req.session.user = o;
-
 				//TO IMPLEMENT - Remember-me button
 				/*if (req.body['remember-me'] == 'true')
 				{
@@ -61,6 +60,57 @@ module.exports = function(app)
 		{
 			res.render('user_prof');
 		}
+	});
+
+	app.post('/user_prof', function(req, res)
+	{
+		//TO IMPLEMENT: save User preferences & sequence generate
+	});
+
+	app.get('/change', function(req, res)
+	{
+		if (req.session.user == null)
+		{
+			// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	
+		else
+		{
+			res.render('change');
+		}
+	});
+
+	app.post('/change', function(req, res)
+	{
+
+		var newPass = req.body['pass'];
+		var user = req.session.user;
+
+		AM.changePassword(user, newPass, function(e, o)
+		{
+			if (o)
+			{
+				req.session.destroy(function(e)
+				{
+					res.status(200).send('Password successfully changed. Please relog.');
+				});
+			}
+			else
+			{
+				res.status(400).send('Password change unsuccessful.')
+			}
+		});
+	});
+
+	app.post('/logout', function(req, res)
+	{
+		res.clearCookie('user');
+		res.clearCookie('pass');
+		req.session.destroy(function(e)
+		{
+			res.status(200).send('Logout good!');
+		});
+
 	});
 
 	app.get('/user_reg', function(req, res)

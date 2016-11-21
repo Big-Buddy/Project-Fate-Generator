@@ -44,5 +44,9 @@ regValidator.prototype.validateForm = function()
 		alert('That is not a valid email address!');
 		return false;
 	}
+	else
+	{
+		return true;
+	}
 }
 
