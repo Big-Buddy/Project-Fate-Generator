@@ -7,6 +7,7 @@ html
 		script(type='text/javascript', src='/vendor/jquery.min.js')
 		script(type='text/javascript', src='/vendor/jquery.form.min.js')
 		script(type='text/javascript', src='/vendor/bootstrap.min.js')
+		script(type='text/javascript', src='/vendor/typeahead.bundle.min.js')
 		script(type='text/javascript', src='/js/views/user_prof.js')
 		script(type='text/javascript', src='/js/controllers/profileController.js')
 
@@ -22,7 +23,7 @@ html
 							li
 								button#changePW.navbar-btn.btn-primary(type='button') Change Password
 								button#logout.navbar-btn.btn-primary(type='button') Log Out	 									
-			div.body-container					
+			div.body-container
 				div.container
 					div.row
 						div.col-sm-9
@@ -116,14 +117,9 @@ html
 												th Type
 										tbody
 											tr
-												td(colspan='2') You have no completed courses.
+												td#emptyTable(colspan='2') You have no completed courses.
 									div.form-group
 										div.col-md-7
-											span.twitter-typeadhead(style='display:inline-block; position: relative;')
-												input.form-control.tt-hint(type='text', readonly autocomplete='off' spellcheck='false', tabindex='-1', dir='ltr', style='position: absolute; top: 0px; left: 0px;')
-												input#add-courses.form-control.tt-input(type='text', placeholder='ex: COMP248', autocomplete='off', spellcheck='false', dir='auto', style='position:relative; vertical-align:top;')
-												pre(aria-hidden='true' style='position:absolute; visibility:hidden; white-space:pre;')
-												div.tt-menu.tt-empty
-													div.tt-dataset.tt-dataset-courses
-											button.btn.btn-default Add
-							
+											input#search(type='text', placeholder='Ex: COMP248' style='color: black;' name='search')
+											button#add.btn.btn-default(type='button') Add
+												span.glyphicon.glyphicon-plus(style='margin-left:5px;')

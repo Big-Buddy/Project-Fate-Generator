@@ -1,4 +1,6 @@
 var AM = require('./modules/account-manager');
+var PM = require('./modules/profile-manager');
+var CL = require('./modules/course-list');
 
 module.exports = function(app)
 {
@@ -80,6 +82,24 @@ module.exports = function(app)
 		}
 	});
 
+/*	app.post('/add-course', function(req, res)
+	{
+		console.log(CL);
+		PM.checkCourse(CL, req.body['search'], function(e, o)
+		{
+			if (o)
+			{
+				console.log(o);
+				res.render('user_prof', {json: o});
+			}
+			else
+			{
+				console.log('fuck');
+				res.status(400).send('Course add unsuccessful.');
+			}
+		});
+	});*/
+
 	app.post('/change', function(req, res)
 	{
 
@@ -97,7 +117,7 @@ module.exports = function(app)
 			}
 			else
 			{
-				res.status(400).send('Password change unsuccessful.')
+				res.status(400).send('Password change unsuccessful.');
 			}
 		});
 	});
