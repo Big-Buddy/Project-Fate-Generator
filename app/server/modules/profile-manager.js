@@ -1,4 +1,4 @@
-/*var pg = require('pg');
+var pg = require('pg');
 
 var config = {
 	user: 'zzbygkffahkpgs',
@@ -10,28 +10,46 @@ var config = {
 	idleTimeoutMillis: 3000,
 };
 
+
 pg.defaults.ssl = true;
 var pool = new pg.Pool(config);
+var Electives=[3];
+var Cores=[];
 
-exports.checkCourse = function(courseList, searchInput, callback)
+//get Electives and Cores
+pool.connect(function(err, client)
 {
-	var holdData;
-	console.log(courseList);
-	for (var course in courseList)
+	if (err) 
 	{
-		var courseCode = courseList[course].course_program + '' + courseList[course].course_number;
-		if (courseCode = searchInput)
-		{
-			holdData = courseList[course];
-		}
-	}
-
-	if (holdData)
-	{
-		callback(null, holdData);
-	}
+		return console.error('error fetching client from pool', err);
+	} 
 	else
 	{
-		callback('could-not-find-course', null)
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 1, function(err, res)
+		{
+			Electives[0] = res.rows;
+		});
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 2, function(err, res)
+		{
+			Electives[1] = res.rows;
+		});
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 3, function(err, res)
+		{
+			Electives[2] = res.rows;
+		});
+		client.query('SELECT * FROM public.courses WHERE course_type = ' + 0, function(err, res)
+		{
+			Cores = res.rows;
+		});
 	}
-}*/
+});
+
+exports.exportCores = function()
+{
+	return Cores;
+}
+
+exports.exportElectives = function()
+{
+	return Electives;
+}

@@ -67,12 +67,12 @@ html
 														div.pull-right
 															strong
 																|(Choose
-																span#class-remaining-1 1
+																span#class-remaining-1 2
 																| more)
 														div.clearfix
 											div#electives-list-1.panel-collapse.collapse
 												ul.list-group
-													each Course in courseList[0]
+													each Course in electivesList[0]
 														li.list-group-item(id="elective"+Course.id)
 															input(type="checkbox")
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
@@ -87,12 +87,12 @@ html
 														div.pull-right
 															strong
 																|(Choose
-																span#class-remaining-1 5
+																span#class-remaining-1 1
 																| more)
 														div.clearfix
 											div#electives-list-2.panel-collapse.collapse
 												ul.list-group
-													each Course in courseList[1]
+													each Course in electivesList[1]
 														li.list-group-item(id="elective"+Course.id)
 															input(type="checkbox")
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
@@ -107,28 +107,30 @@ html
 														div.pull-right
 															strong
 																|(Choose
-																span#class-remaining-1 2
+																span#class-remaining-1 5
 																| more)
 														div.clearfix
 											div#electives-list-3.panel-collapse.collapse
 												ul.list-group
-													each Course in courseList[2]
+													each Course in electivesList[2]
 														li.list-group-item(id="elective"+Course.id)
 															input(type="checkbox")
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.page-header
 										h2 Completed Courses
 									p Add courses that you've completed to this list to omit them from sequence generation.
-									table.table
-										thead
-											tr
-												th Course
-												th Type
-										tbody
-											tr
-												td#emptyTable(colspan='2') You have no completed courses.
-									div.form-group
-										div.col-md-7
-											input#search(type='text', placeholder='Ex: COMP248' style='color: black;' name='search')
-											button#add.btn.btn-default(type='button') Add
-												span.glyphicon.glyphicon-plus(style='margin-left:5px;')
+									div.panel-group
+										div.panel.panel-primary
+											div.panel-heading
+												h4.panel-title
+													a(data-toggle='collapse', href='#completed-courses-list')
+														div.pull-left
+															i.glyphicon.glyphicon-chevron-down
+															|   COMPLETED COURSES
+														div.clearfix
+											div#completed-courses-list.panel-collapse.collapse
+												ul.list-group
+													each Course in coreList
+														li.list-group-item(id="core"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
