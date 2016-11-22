@@ -15,7 +15,7 @@ html
 		block content
 			nav.navbar.navbar-default
 				div.container
-					div.narbar-header
+					div.navbar-header
 						a(href='/user_prof')
 							img.navbar-brand(src='/img/logo.png', alt='Project Fate Generator')
 					div.collapse.navbar-collapse
@@ -118,7 +118,8 @@ html
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.page-header
 										h2 Completed Courses
-									p Add courses that you've completed to this list to omit them from sequence generation.
+									p Select the courses that you've completed to omit them from sequence generation. (CTRL+F helps!)
+									p Blue = Core<br>Yellow = Science Electives<br>Red = General Electives<br>Green = Program Electives
 									div.panel-group
 										div.panel.panel-primary
 											div.panel-heading
@@ -131,6 +132,18 @@ html
 											div#completed-courses-list.panel-collapse.collapse
 												ul.list-group
 													each Course in coreList
-														li.list-group-item(id="core"+Course.id)
+														li.list-group-item.list-group-item-info(id="core"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+													each Course in electivesList[0]
+														li.list-group-item.list-group-item-warning(id="elective"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+													each Course in electivesList[1]
+														li.list-group-item.list-group-item-danger(id="elective"+Course.id)
+															input(type="checkbox")
+															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+													each Course in electivesList[2]
+														li.list-group-item.list-group-item-success(id="elective"+Course.id)
 															input(type="checkbox")
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"

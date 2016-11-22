@@ -20,11 +20,19 @@ $(document).ready(function()
 			if (status == 'success')
 			{
 				alert(responseText);
+				window.location.href = '/';
 			}
 		},
 		error: function(err)
 		{
-			alert('Failed to add account.')
+			if (err.responseText == 'username-taken')
+			{
+				alert('That username is taken.');
+			}
+			else if (err.responseText == 'email-taken')
+			{
+				alert('That email is taken.');
+			}
 		}
 	});
 });

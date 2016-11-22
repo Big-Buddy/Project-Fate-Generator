@@ -3,7 +3,7 @@ doctype html
 html
 	head(lang='en')
 		meta(charset='UTF-8')
-		title Project Fate Generator
+		title Login
 		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
 		script(type='text/javascript', src='/vendor/jquery.min.js')
 		script(type='text/javascript', src='/vendor/jquery.form.min.js')
@@ -14,7 +14,7 @@ html
 	body
 		nav.navbar.navbar-default
 			div.container
-				div.narbar-header
+				div.navbar-header
 					a(href='/')
 							img.img-responsive(src='/img/logo.png', alt='Project Fate Generator')
 		div.body-container
@@ -22,6 +22,9 @@ html
 				div.row
 					div.col-md-8.col-md-offset-1
 						div.panel
+							div.intro-message.panel-outer-heading(style='text-align:center;')
+								h1 Welcome!
+								h3 Login with your credentials or register a new account
 							div.panel-body
 								form#login.form-horizontal(method='post')
 									div.form-group

@@ -1,52 +1,46 @@
 doctype html
-html
-  head
-    meta(charset='UTF-8')
-    title Concordia Scheduler
-    link(rel='stylesheet', type='text/css', href='/vendor/bootstrap.min.css')
-    link(rel='stylesheet', type='text/css', href='/css/user_reg.css')
-    script(type='text/javascript', src='/vendor/jquery.min.js')
-    script(type='text/javascript', src='/vendor/jquery.form.min.js')
-    script(type='text/javascript', src='/js/views/user_reg.js')
-    script(type='text/javascript', src='/js/form-validation/regValidator.js')
 
-  body
-    .container(align='center')
-      .top(align='center')
-        .topNav(style='overflow:auto')
-          ul.topNavLeft
-            li.navLeft
-              a(href='/') Project-Fate-Generator
-          ul.topNavRight
-          br
-          br
-      .body(align='center')
-        .user_reg(align='center')
-          h1 User Registration
-          .space
-          form#reg(method='post')
-            .main
-              .content
-                div
-                  label Username:
-                div
-                  input.textInput(type='text', name='user', id='user')
-              .content
-                div
-                  label Password:
-                div
-                  input.textInput(type='password', name='pass', id='pass')
-                div
-                  label Password Confirmation:
-                div
-                  input.textInput(type='password', name='pwConf', id='pass-cf')
-              .content
-                div
-                  label Email Address:
-                div
-                  input.textInput(type='text', name='email', id='email')
-              .content
-                div
-                  input#register.btn.btn-default.btn-lg(type='submit', value='Register')
-        div
-          div
+html
+	head
+		title User Registration
+		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
+		script(type='text/javascript', src='/vendor/jquery.min.js')
+		script(type='text/javascript', src='/vendor/jquery.form.min.js')
+		script(type='text/javascript', src='/js/views/user_reg.js')
+		script(type='text/javascript', src='/js/form-validation/regValidator.js')
+
+	body
+		nav.navbar.navbar-default
+			div.container
+				div.navbar-header
+					a(href='/')
+							img.img-responsive(src='/img/logo.png', alt='Project Fate Generator')
+		div.body-container
+			div.container
+				div.row
+					div.col-md-8.col-md-offset-2
+						div.panel
+							div.intro-message.panel-outer-heading(style='text-align:center;')
+								h1 User Registration
+							hr.intro-divider-5
+							div.panel-body
+								form#reg.form-horizontal(method='post')
+									div.form-group
+										label.col-md-4.control-label Username
+										div.col-md-6
+											input.form-control(type='text', name='user', id='user')
+									div.form-group
+										label.col-md-4.control-label Password
+										div.col-md-6
+											input.form-control(type='Password', name='pass', id='pass')
+									div.form-group
+										label.col-md-4.control-label Password Confirmation
+										div.col-md-6
+											input.form-control(type='Password', name='pwConf', id='pass-cf')
+									div.form-group
+										label.col-md-4.control-label Email
+										div.col-md-6
+											input.form-control(type='text', name='email', id='email')
+									div.form-group
+										div.col-md-8.col-md-offset-4
+											button#register.btn.btn-default.btn-lg(type='submit') Add Account
