@@ -1,5 +1,6 @@
 var AM = require('./modules/account-manager');
 var PM = require('./modules/profile-manager');
+var SG = require('./modules/sequence-generator');
 
 module.exports = function(app)
 {
@@ -38,13 +39,6 @@ module.exports = function(app)
 			else 
 			{
 				req.session.user = o;
-				//TO IMPLEMENT - Remember-me button
-				/*if (req.body['remember-me'] == 'true')
-				{
-					res.cookie('user', o.user_name, {maxAge: 90000});
-					res.cookie('pass', o.user_password, {maxAge: 90000});
-				}*/
-
 				res.status(200).send(o);
 			}
 		});
