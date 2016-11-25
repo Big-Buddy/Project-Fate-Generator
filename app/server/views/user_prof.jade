@@ -73,8 +73,8 @@ html
 											div#electives-list-1.panel-collapse.collapse
 												ul.list-group
 													each Course in electivesList[0]
-														li.list-group-item(id="elective"+Course.id)
-															input(type="checkbox")
+														li.list-group-item(name= "listItem", id="elective"+Course.id)
+															input(name= "electives", type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.panel-group
 										div.panel.panel-danger
@@ -94,7 +94,7 @@ html
 												ul.list-group
 													each Course in electivesList[1]
 														li.list-group-item(id="elective"+Course.id)
-															input(type="checkbox")
+															input(name= "electives", type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.panel-group
 										div.panel.panel-danger
@@ -114,7 +114,7 @@ html
 												ul.list-group
 													each Course in electivesList[2]
 														li.list-group-item(id="elective"+Course.id)
-															input(type="checkbox")
+															input(name= "electives", type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 									div.page-header
 										h2 Completed Courses
@@ -133,17 +133,17 @@ html
 												ul.list-group
 													each Course in coreList
 														li.list-group-item.list-group-item-info(id="core"+Course.id)
-															input(type="checkbox")
+															input(name="completed",type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 													each Course in electivesList[0]
 														li.list-group-item.list-group-item-warning(id="elective"+Course.id)
-															input(type="checkbox")
+															input(name="completed",type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 													each Course in electivesList[1]
 														li.list-group-item.list-group-item-danger(id="elective"+Course.id)
-															input(type="checkbox")
+															input(name="completed",type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 													each Course in electivesList[2]
 														li.list-group-item.list-group-item-success(id="elective"+Course.id)
-															input(type="checkbox")
+															input(name="completed",type="checkbox", value=Course.id)
 															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
