@@ -7,9 +7,9 @@ html
 		script(type='text/javascript', src='/vendor/jquery.min.js')
 		script(type='text/javascript', src='/vendor/jquery.form.min.js')
 		script(type='text/javascript', src='/vendor/bootstrap.min.js')
-		script(type='text/javascript', src='/vendor/typeahead.bundle.min.js')
 		script(type='text/javascript', src='/js/views/user_prof.js')
 		script(type='text/javascript', src='/js/controllers/profileController.js')
+		script(type='text/javascript', src='/js/form-validation/sequenceValidator.js')
 
 	body
 		block content
@@ -30,120 +30,119 @@ html
 							form#userProfile.form-horizontal(method='post')
 								div.form-group
 									div.col-md-7
-										button.btn.btn-success.btn-lg GENERATE SEQUENCE!			
+										button.btn.btn-success.btn-lg(type='submit') GENERATE SEQUENCE!			
 								div.page-header
 									h2 Preferences
 								p Adjust the preferences below to modify the sequence that is generated.
-
-									div.form-group
-										label.col-md-3.control-label Starting Semester
-										div.col-md-7
-											label.radio-inline
-												input#starting_semester_fall(type='radio', name='starting_semester', value='1', checked)
-												| Fall
-											label.radio-inline
-												input#starting_semester_fall(type='radio', name='starting_semester', value='2')
-												| Winter		
-									div.form-group
-										label.col-md-3.control-label Summer Classes?
-										div.col-md-7
-											label.radio-inline
-												input(type='radio', name='summer_opt', id='summer_yes')
-												| Yes
-											label.radio-inline
-												input(type='radio', name='summer_opt', id='summer_no', checked)
-												| No
-									div.page-header
-										h2 Electives
-									p Select your desired electives from the lists below.
-									div.panel-group
-										div.panel.panel-danger
-											div.panel-heading
-												h4.panel-title
-													a(data-toggle='collapse', href='#electives-list-1')
-														div.pull-left
-															i.glyphicon.glyphicon-chevron-down
-															|   SCIENCE ELECTIVES
-														div.pull-right
-															strong
-																|(Choose
-																span#class-remaining-1 2
-																| more)
-														div.clearfix
-											div#electives-list-1.panel-collapse.collapse
-												ul.list-group
-													each Course in electivesList[0]
-														li.list-group-item(name= "listItem", id="elective"+Course.id)
-															input(name= "electives", type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
-									div.panel-group
-										div.panel.panel-danger
-											div.panel-heading
-												h4.panel-title
-													a(data-toggle='collapse', href='#electives-list-2')
-														div.pull-left
-															i.glyphicon.glyphicon-chevron-down
-															|   GENERAL ELECTIVES
-														div.pull-right
-															strong
-																|(Choose
-																span#class-remaining-1 1
-																| more)
-														div.clearfix
-											div#electives-list-2.panel-collapse.collapse
-												ul.list-group
-													each Course in electivesList[1]
-														li.list-group-item(id="elective"+Course.id)
-															input(name= "electives", type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
-									div.panel-group
-										div.panel.panel-danger
-											div.panel-heading
-												h4.panel-title
-													a(data-toggle='collapse', href='#electives-list-3')
-														div.pull-left
-															i.glyphicon.glyphicon-chevron-down
-															|   PROGRAM ELECTIVES
-														div.pull-right
-															strong
-																|(Choose
-																span#class-remaining-1 5
-																| more)
-														div.clearfix
-											div#electives-list-3.panel-collapse.collapse
-												ul.list-group
-													each Course in electivesList[2]
-														li.list-group-item(id="elective"+Course.id)
-															input(name= "electives", type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
-									div.page-header
-										h2 Completed Courses
-									p Select the courses that you've completed to omit them from sequence generation. (CTRL+F helps!)
-									p Blue = Core<br>Yellow = Science Electives<br>Red = General Electives<br>Green = Program Electives
-									div.panel-group
-										div.panel.panel-primary
-											div.panel-heading
-												h4.panel-title
-													a(data-toggle='collapse', href='#completed-courses-list')
-														div.pull-left
-															i.glyphicon.glyphicon-chevron-down
-															|   COMPLETED COURSES
-														div.clearfix
-											div#completed-courses-list.panel-collapse.collapse
-												ul.list-group
-													each Course in coreList
-														li.list-group-item.list-group-item-info(id="core"+Course.id)
-															input(name="completed",type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
-													each Course in electivesList[0]
-														li.list-group-item.list-group-item-warning(id="elective"+Course.id)
-															input(name="completed",type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
-													each Course in electivesList[1]
-														li.list-group-item.list-group-item-danger(id="elective"+Course.id)
-															input(name="completed",type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
-													each Course in electivesList[2]
-														li.list-group-item.list-group-item-success(id="elective"+Course.id)
-															input(name="completed",type="checkbox", value=Course.id)
-															label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+								div.form-group
+									label.col-md-3.control-label Starting Semester
+									div.col-md-7
+										label.radio-inline
+											input#starting_semester_fall(type='radio', name='starting_semester', value='1', checked)
+											| Fall
+										label.radio-inline
+											input#starting_semester_winter(type='radio', name='starting_semester', value='2')
+											| Winter		
+								div.form-group
+									label.col-md-3.control-label Summer Classes?
+									div.col-md-7
+										label.radio-inline
+											input(type='radio', name='summer_opt', id='summer_yes')
+											| Yes
+										label.radio-inline
+											input(type='radio', name='summer_opt', id='summer_no', checked)
+											| No
+								div.page-header
+									h2 Electives
+								p Select your desired electives from the lists below.
+								div.panel-group
+									div.panel.panel-danger
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', href='#electives-list-1')
+													div.pull-left
+														i.glyphicon.glyphicon-chevron-down
+														|   SCIENCE ELECTIVES
+													div.pull-right
+														strong
+															|(Choose
+															span#class-remaining-1 2
+															| more)
+													div.clearfix
+										div#electives-list-1.panel-collapse.collapse
+											ul.list-group
+												each Course in electivesList[0]
+													li.list-group-item(name= "listItem", id="elective"+Course.id)
+														input.science(name= "electives", type="checkbox", value=Course.id)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+								div.panel-group
+									div.panel.panel-danger
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', href='#electives-list-2')
+													div.pull-left
+														i.glyphicon.glyphicon-chevron-down
+														|   GENERAL ELECTIVES
+													div.pull-right
+														strong
+															|(Choose
+															span#class-remaining-1 1
+															| more)
+													div.clearfix
+										div#electives-list-2.panel-collapse.collapse
+											ul.list-group
+												each Course in electivesList[1]
+													li.list-group-item(id="elective"+Course.id)
+														input.general(name= "electives", type="checkbox", value=Course.id)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+								div.panel-group
+									div.panel.panel-danger
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', href='#electives-list-3')
+													div.pull-left
+														i.glyphicon.glyphicon-chevron-down
+														|   PROGRAM ELECTIVES
+													div.pull-right
+														strong
+															|(Choose
+															span#class-remaining-1 5
+															| more)
+													div.clearfix
+										div#electives-list-3.panel-collapse.collapse
+											ul.list-group
+												each Course in electivesList[2]
+													li.list-group-item(id="elective"+Course.id)
+														input.program(name= "electives", type="checkbox", value=Course.id)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+								div.page-header
+									h2 Completed Courses
+								p Select the courses that you've completed to omit them from sequence generation. (CTRL+F helps!)
+								p Blue = Core<br>Yellow = Science Electives<br>Red = General Electives<br>Green = Program Electives
+								div.panel-group
+									div.panel.panel-primary
+										div.panel-heading
+											h4.panel-title
+												a(data-toggle='collapse', href='#completed-courses-list')
+													div.pull-left
+														i.glyphicon.glyphicon-chevron-down
+														|   COMPLETED COURSES
+													div.clearfix
+										div#completed-courses-list.panel-collapse.collapse
+											ul.list-group
+												each Course in coreList
+													li.list-group-item.list-group-item-info(id="core"+Course.id)
+														input.completed(name="completed",type="checkbox", value=Course.id + '.' + Course.prerequisites + '.' + Course.course_program+Course.course_number)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+												each Course in electivesList[0]
+													li.list-group-item.list-group-item-warning(id="elective"+Course.id)
+														input.completed.science(name="completed",type="checkbox", value=Course.id + '.' + Course.prerequisites + '.' + Course.course_program+Course.course_number)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+												each Course in electivesList[1]
+													li.list-group-item.list-group-item-danger(id="elective"+Course.id)
+														input.completed.general(name="completed",type="checkbox", value=Course.id + '.' + Course.prerequisites + '.' + Course.course_program+Course.course_number)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
+												each Course in electivesList[2]
+													li.list-group-item.list-group-item-success(id="elective"+Course.id)
+														input.completed.program(name="completed",type="checkbox", value=Course.id + '.' + Course.prerequisites + '.' + Course.course_program+Course.course_number)
+														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"

@@ -7,6 +7,7 @@ $(document).ready(function()
 	var validator = new sequenceValidator();
 
 	$('#userProfile').ajaxForm({
+
 		beforeSubmit : function(formData, jqForm, options)
 		{
 			if (validator.validateForm() == false)
@@ -22,13 +23,12 @@ $(document).ready(function()
 		{
 			if (status == 'success')
 			{
-				alert(responseText);
-				//window.location.href = '/sequence'; SEND THEM TO THE SEQUENCE
+				//refer to /sequence
 			}
 		},
-		error: function(err)
+		error : function(err)
 		{
-			//display error message
+			//sequence generation errors
 		}
 	});
-}
+});
