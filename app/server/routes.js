@@ -60,6 +60,8 @@ module.exports = function(app)
 	app.post('/user_prof', function(req, res)
 	{
 		//TO IMPLEMENT: save User preferences & sequence generate
+		console.log('Attempting to post user_prof...');
+		res.status(200).send('Success');
 	});
 
 	app.get('/change', function(req, res)

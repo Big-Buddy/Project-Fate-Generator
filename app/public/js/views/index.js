@@ -19,7 +19,7 @@ $(document).ready(function()
 		{
 			if (status == 'success') window.location.href = '/user_prof';
 		},
-		error: function(err)
+		error : function(err)
 		{
 			if (err.responseText == 'user-not-found')
 			{
