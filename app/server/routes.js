@@ -1,7 +1,7 @@
 var AM = require('./modules/account-manager');
 var PM = require('./modules/profile-manager');
 var SG = require('./modules/sequence-generator');
-
+var bodyParser = require('body-parser');
 module.exports = function(app)
 {
 	app.get('/', function (req, res)
@@ -44,6 +44,7 @@ module.exports = function(app)
 		});
 	});
 
+	app.use(bodyParser.urlencoded({extended : true}));
 	app.get('/user_prof', function(req, res) 
 	{
 		if (req.session.user == null)
@@ -59,6 +60,14 @@ module.exports = function(app)
 
 	app.post('/user_prof', function(req, res)
 	{
+		//SG.parseToJson(req.body["electives"],req.body["completed"]);
+		console.log("in user prof post");
+		console.log(SG.parseToJson(req.body["electives"],req.body["completed"]));
+		//console.log("electives: "+req.body["electives"]);
+		//console.log(req.body["chosenGeneralElectives"]);
+		//console.log(req.body["chosenProgramElectives"]);
+		//console.log("completed: "+req.body["completed"]);
+
 		//TO IMPLEMENT: save User preferences & sequence generate
 	});
 
