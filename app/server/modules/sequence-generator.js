@@ -13,27 +13,11 @@ var config = {
 
 pg.defaults.ssl = true;
 var pool = new pg.Pool(config);
-var courseList=[];
+var coreList=[];
+var electivesList=[];
 var lectureList=[];
 var labList=[];
 var tutorialList=[];
-/*
-anonymous {
-id: 80,
-course_program: 'ENGR',
-course_number: 233,
-credits: 3,
-course_name: 'Applied Advanced Calculus',
-course_type: 0,
-prerequisites: [],
-priority: 2,
-course_id: 4,
-section_code: 'XB',
-start_time: 1415,
-end_time: 1555,
-days: '----F--',
-semester: 'Winter',
-lecture_id: 30 }*/
 
 var jsonStructure = {
 
@@ -46,10 +30,15 @@ pool.connect(function(err, client)
 	} 
 	else
 	{
-		var sqlQuery='SELECT * FROM public.courses ORDER BY id';
+		var sqlQuery='SELECT * FROM public.courses WHERE course_type=0';
 		client.query(sqlQuery, function(err, res)
 		{
-			courseList = res.rows;
+			coreList = res.rows;
+		});
+		var sqlQuery='SELECT * FROM public.courses WHERE course_type=1 OR course_type=2 OR course_type=3';
+		client.query(sqlQuery, function(err, res)
+		{
+			electivesList = res.rows;
 		});
 		sqlQuery='SELECT * FROM public.lectures';
 		client.query(sqlQuery, function(err, res)
@@ -69,15 +58,15 @@ pool.connect(function(err, client)
 	}
 });
 
-exports.parseToJson = function(electives, completed)
-{
+var parseDBArrayToJson = function(DBArray){
 	//loop through full course list:
-	for(course in courseList){
+	var jsonArrayOfCourses=[];
+	for(course in DBArray){
 		var lectureListForThisCourse = [];
 		//match this courseID with according lectures from the full lectureList
 
 		for(lecture in lectureList){
-			if(courseList[course].id==lectureList[lecture].course_id){
+			if(DBArray[course].id==lectureList[lecture].course_id){
 				//match this lectureID with according labs from the full lab list
 				var labSections=[];
 				for(lab in labList){
@@ -122,23 +111,93 @@ exports.parseToJson = function(electives, completed)
 			}
 		}
 		var element = {
-			"courseID":courseList[course].id,
-			"course_name":courseList[course].course_name,
-			"course_number":courseList[course].course_number,
+			"courseID":DBArray[course].id,
+			"course_name":DBArray[course].course_name,
+			"course_number":DBArray[course].course_number,
 			"lectureSections":lectureListForThisCourse
 		}
-		console.log(element.lectureSections[1].tutorialSections[0].days);
-		break;
+		jsonArrayOfCourses.push(element);
+		//console.log(element.course_name);
 	}
-	return "done";
-	//return courseList[41];
-	//return courseList[5];
-	//return labList[1];
-	//return tutorialList[1];
-	//return lectureList[1];
-	//return courselist
+	return jsonArrayOfCourses;
+}
+
+var removeJsonElementsByCourseID= function(CourseID, JSONArray){
+	for(elementIndex in JSONArray){
+		if(JSONArray[elementIndex].courseID==CourseID){
+			console.log("elementIndex: "+elementIndex);
+			console.log("Course ID: "+CourseID);
+			JSONArray.splice(elementIndex,1);
+			// console.log(JSONArray);
+		}
+	}
+	return JSONArray;
+}
+
+var removeJsonElementsByCourseIDArray= function(CourseIDArray, JSONArray){
+	for(courseIDIndex in CourseIDArray)
+		JSONArray=removeJsonElementsByCourseID(CourseIDArray[courseIDIndex],JSONArray);
+	return JSONArray;
+}
+//-------------------------------------------------------------GARBAGE AHEAD----------------------------------------------------
+function createIncompleteList(courses, incompleteCourses)
+{
+    for (i = 0; i < courses.length; i++)
+    {
+       incompleteCourses.push(courses[i]);
+    }
+
+}
+function addToPotentialList(term, courses, potentialCourses)
+{
+    for (i = 0; i < courses.length; i++)
+    {
+        for (j = 0; j < courses[i].lectureSections.length; j++)
+        {
+        	console.log(courses[i].lectureSections[j].semester);
+            if (courses[i].lectureSections[j].semester == term)
+            {
+            	console.log("in if");
+                potentialCourses.push(courses[i]);
+                break;
+            }
+        }
+    }
+    for (i = 0; i < potentialCourses.length; i++)
+    {
+        console.log(potentialCourses[i].courseCode + " ");
+    }
+}
+//-----------------------------------------------------------END OF GARBAGE------------------------------------------------------
+exports.parseToJson = function(electives, completed)
+{
+	//loop through full course list:
+	var corseList = parseDBArrayToJson(coreList);
+	var incompleteCourses=[];
+	var potentialCourses=[];
+	createIncompleteList(corseList,incompleteCourses);
+	addToPotentialList("fall",corseList,potentialCourses);
+	console.log(potentialCourses);
+	//console.log(corseList.lectureSections[1].semester);
+	//parseDBArrayToJson(electivesList);
+	//var completedID = completed.split('.');
+	//console.log(completedID[0]);
+	//var removingID=[1,2,3,67];
+	// console.log("electives id: "+electives);
+	// console.log("completed id: "+completed);
+	//console.log(corseList);
+	// console.log("removing " +completed);
+	//corseList=removeJsonElementsByCourseIDArray(removingID,corseList);
+	//corseList=removeJsonElementsByCourseIDArray(67,corseList);
+	//console.log(corseList);
+	return "hello world";
 };
+
+
 //1. get all the core courses (course_type = 0)
+//1.1 parsed all elective
+//1.3 pick out the elective json objects from the full electives list, based on the id's that were passed to me from routes.js
+//1.4 subtract all the courses with ID matching to the one that was passed to me from routes.js
 //3. add all the chosen electives (checked and course_type=1 || course_Type=2 || course_type=3)
 //2. subtract completed courses (checked and course_type = 0)
 
