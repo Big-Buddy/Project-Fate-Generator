@@ -1,0 +1,30 @@
+html
+	head
+		title User Profile
+		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
+		script(type='text/javascript', src='/vendor/jquery.min.js')
+		script(type='text/javascript', src='/vendor/jquery.form.min.js')
+		script(type='text/javascript', src='/vendor/bootstrap.min.js')
+
+	body
+		block content
+			nav.navbar.navbar-default
+				div.container
+					div.navbar-header
+						a(href='/user_prof')
+							img.navbar-brand(src='/img/logo.png', alt='Project Fate Generator')
+					div.collapse.navbar-collapse
+						ul.nav.navbar-nav.navbar-right
+							li
+								button#logout.navbar-btn.btn-primary(type='button') Log Out
+			div.body-container
+				div.container
+					div.row
+						div.col-md-12
+							h2 Behold, your sequence!
+					div.row
+						<!--Data goes here!-->
+						<!--Every two semester GENERATE div.clearfix.visible-md-block-->
+						<!--For each semester GENERATE div.col-md-6.col-sm-12 + ul.list-group-->
+						<!--For each course in semester GENERATE li.list-group-item-->
+
