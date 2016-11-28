@@ -44,7 +44,6 @@ module.exports = function(app)
 		});
 	});
 
-	app.use(bodyParser.urlencoded({extended : true}));
 	app.get('/user_prof', function(req, res) 
 	{
 		if (req.session.user == null)
@@ -53,23 +52,29 @@ module.exports = function(app)
 			res.redirect('/');
 		}	
 		else
-		{
+		{	
 			res.render('user_prof', {electivesList:PM.exportElectives(), coreList:PM.exportCores()});
 		}
 	});
 
 	app.post('/user_prof', function(req, res)
 	{
+		console.log(req.session.user);
+		AM.saveUserPreferences(req.session.user, {
+			starting_semester : req.body['starting_semester'],
+			summer_option : req.body['summer_opt'],
+			electives : req.body["electives"],
+			completed : req.body["completed"]
+		});
 		//SG.parseToJson(req.body["electives"],req.body["completed"]);
-		console.log("in user prof post");
-		console.log(SG.parseToJson(req.body["electives"],req.body["completed"]));
+		//console.log("in user prof post");
+		//console.log(SG.parseToJson(req.body["electives"],req.body["completed"]));
 		//console.log("electives: "+req.body["electives"]);
 		//console.log(req.body["chosenGeneralElectives"]);
 		//console.log(req.body["chosenProgramElectives"]);
 		//console.log("completed: "+req.body["completed"]);
 
 		//TO IMPLEMENT: save User preferences & sequence generate
-		console.log('Attempting to post user_prof...');
 		res.status(200).send('Success');
 	});
 

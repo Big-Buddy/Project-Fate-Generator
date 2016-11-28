@@ -67,16 +67,16 @@ exports.manualLogin = function(user, pass, callback)
 	if (holdData)
 	{
 		validatePassword(pass, holdData.user_password, function(err, res) 
+		{
+			if (res)
 			{
-				if (res)
-				{
-					callback(null, holdData);
-				}	
-				else
-				{
-					callback('invalid-password');
-				}
-			});
+				callback(null, holdData);
+			}	
+			else
+			{
+				callback('invalid-password');
+			}
+		});
 	}
 	else
 	{
@@ -105,32 +105,32 @@ exports.addAccount = function(newData, callback)
 	else
 	{
 		saltAndHash(newData.pass, function(hash)
+		{
+			newData.pass = hash;
+			pool.connect(function(err, client)
+			{
+				if (err) 
+				{
+					return console.error('error fetching client from pool', err);
+				}
+				else
+				{
+					client.query('INSERT INTO public.users(user_name, user_password, user_email) VALUES (\'' + newData.user + '\',\'' + newData.pass + '\',\'' + newData.email + '\')', function(err, res)
 					{
-						newData.pass = hash;
-						pool.connect(function(err, client)
+						if (err)
 						{
-							if (err) 
-							{
-								return console.error('error fetching client from pool', err);
-							}
-							else
-							{
-								client.query('INSERT INTO public.users(user_name, user_password, user_email) VALUES (\'' + newData.user + '\',\'' + newData.pass + '\',\'' + newData.email + '\')', function(err, res)
-								{
-									if (err)
-									{
-										console.log('Failed to add new account to database.');
-									}
-									else
-									{
-										console.log('User successfully added.');
-										updateAccounts(pool);
-										callback();
-									}
-								});
-							} 
-						});
+							console.log('Failed to add new account to database.');
+						}
+						else
+						{
+							console.log('User successfully added.');
+							updateAccounts(pool);
+							callback();
+						}
 					});
+				} 
+			});
+		});
 	}
 };
 
@@ -153,34 +153,119 @@ exports.changePassword = function(user, newPass, callback)
 		{
 			holdData.pass = hash;
 			pool.connect(function(err, client)
+			{
+				if (err) 
+				{
+					return console.error('error fetching client from pool', err);
+				}
+				else
+				{
+					client.query('UPDATE public.users SET user_password = \'' + holdData.pass + '\' WHERE user_id = ' + holdData.user_id + ';', function(err, res)
+					{
+						if (err)
 						{
-							if (err) 
-							{
-								return console.error('error fetching client from pool', err);
-							}
-							else
-							{
-								client.query('UPDATE public.users SET user_password = \'' + holdData.pass + '\' WHERE user_id = ' + holdData.user_id + ';', function(err, res)
-								{
-									if (err)
-									{
-										console.log('Failed to update password of ' + holdData.user_name + ' in database.');
-									}
-									else
-									{
-										console.log('User\'s password successfully changed.');
-										updateAccounts(pool);
-										callback(null, holdData);
-									}
-								});
-							} 
-						});
+							console.log('Failed to update password of ' + holdData.user_name + ' in database.');
+						}
+						else
+						{
+							console.log('User\'s password successfully changed.');
+							updateAccounts(pool);
+							callback(null, holdData);
+						}
+					});
+				} 
+			});
 		});		
 	}
 	else
 	{
 		callback('Couldn\'t find user to change password.', null)
 	}
+}
+
+exports.saveUserPreferences = function(user, dataToSave)
+{
+	var holdData;
+
+	accounts.find(function(userCredentials) 
+	{
+		if (userCredentials.user_name === user.user_name)
+		{
+			holdData = userCredentials;
+		}	
+	});
+
+	if (holdData)
+	{
+		console.log(dataToSave);
+
+		var summer_opt = (dataToSave.summer_option == 'yes') ? true : false;
+		console.log(summer_opt);
+		pool.connect(function(err, client)
+		{
+			if (err) 
+			{
+				return console.error('error fetching client from pool', err);
+			}
+			else
+			{
+				client.query('UPDATE public.users SET starting_semester = \'' + dataToSave.starting_semester + '\', summer_option = \'' + summer_opt + '\', electives = \'' + dataToSave.electives + '\', completed = \'' + dataToSave.completed + '\' WHERE user_id = ' + holdData.user_id + ';', function(err, res)
+				{
+					if (err)
+					{
+						console.log('Failed to save user prefereneces in database.');
+					}
+					else
+					{
+						console.log('User preferences successfully saved.');
+						updateAccounts(pool);
+					}
+				});
+			} 
+		});
+	}
+}
+
+exports.loadUserPreferences = function(user)
+{
+	var holdData;
+	var userPreferences = [];
+
+	accounts.find(function(userCredentials) 
+	{
+		if (userCredentials.user_name === user.user_name)
+		{
+			holdData = userCredentials;
+		}
+	});
+
+	if (holdData)
+	{
+		pool.connect(function(err, client)
+		{
+			if (err) 
+			{
+				return console.error('error fetching client from pool', err);
+			}
+			else
+			{
+				client.query('SELECT starting_semester, summer_option, electives, completed FROM public.users WHERE user_id = \'' + holdData.user_id + ';', function(err, res)
+				{
+					if (err)
+					{
+						console.log('Failed to load user preferences from database.');
+					}
+					else
+					{
+						console.log('User preferences successfully fetched.');
+						userPreferences = res.rows;
+					}
+				});
+			} 
+		});
+	}
+
+	return userPreferences;
 }
 
 //Update Accounts list after new account creation
@@ -200,9 +285,7 @@ var updateAccounts = function(pool)
 			});
 		}
 	});
-};
-
-//TO-DO save user preferences
+}
 
 //BASIC PASSWORD ENCRYPTION------------------------
 

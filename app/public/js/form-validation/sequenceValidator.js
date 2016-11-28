@@ -53,7 +53,7 @@ sequenceValidator.prototype.validateForm = function()
 {
 	var conflicts = this.validateCompleted();
 	
-	/*if (this.validateScience() == false)
+	if (this.validateScience() == false)
 	{
 		alert('You need to select a total of two basic science electives.');
 		return false;
@@ -68,7 +68,7 @@ sequenceValidator.prototype.validateForm = function()
 		alert('You need to select at least five program electives.');
 		return false;
 	}
-	else*/ if (conflicts.length > 0)
+	else if (conflicts.length > 0)
 	{
 		var error = 'Completed Courses Error! You need to fulfill the prerequisites for:';
 
