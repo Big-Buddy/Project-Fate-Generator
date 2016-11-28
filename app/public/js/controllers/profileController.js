@@ -33,9 +33,11 @@ $(document).ready(function()
 		$("#class-remaining-1").text(totalScienceElectives-numScienceBoxesChecked);
 		if(numScienceBoxesChecked >= totalScienceElectives) {
 	        $('#electives-list-1').find('input[type="checkbox"]').not(':checked').prop('disabled', true);
+	        $('#sciencePanel').attr('class','panel-success');
 	   }
 	   else{
 	   	$('#electives-list-1').find('input[type="checkbox"]').not(':checked').prop('disabled', false);
+	    $('#sciencePanel').attr('class','panel-danger');
 	   }
 	});
 	//General electives selection
@@ -44,9 +46,11 @@ $(document).ready(function()
 		$("#class-remaining-2").text(totalGeneralElectives-numGeneralBoxesChecked);
 		if(numGeneralBoxesChecked >= totalGeneralElectives) {
 	        $('#electives-list-2').find('input[type="checkbox"]').not(':checked').prop('disabled', true);
+	        $('#generalPanel').attr('class','panel-success');
 	   }
 	   else{
 	   	$('#electives-list-2').find('input[type="checkbox"]').not(':checked').prop('disabled', false);
+	    $('#generalPanel').attr('class','panel-danger');
 	   }
 	});
 	//Program electives selection
@@ -55,9 +59,11 @@ $(document).ready(function()
 		$("#class-remaining-3").text(totalProgramElectives-numProgramBoxesChecked);
 		if(numProgramBoxesChecked >= totalProgramElectives) {
 	        $('#electives-list-3').find('input[type="checkbox"]').not(':checked').prop('disabled', true);
+	        $('#programPanel').attr('class','panel-success');
 	   }
 	   else{
 	   	$('#electives-list-3').find('input[type="checkbox"]').not(':checked').prop('disabled', false);
+	        $('#programPanel').attr('class','panel-danger');
 	   }
 	});
 });

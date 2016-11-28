@@ -56,7 +56,7 @@ html
 									h2 Electives
 								p Select your desired electives from the lists below.
 								div.panel-group
-									div.panel.panel-danger
+									div#sciencePanel.panel.panel-danger
 										div.panel-heading
 											h4.panel-title
 												a(data-toggle='collapse', href='#electives-list-1')
@@ -76,7 +76,7 @@ html
 														input.science(name="electives", type="checkbox", value=Course.id)
 														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 								div.panel-group
-									div.panel.panel-danger
+									div#generalPanel.panel.panel-danger
 										div.panel-heading
 											h4.panel-title
 												a(data-toggle='collapse', href='#electives-list-2')
@@ -96,7 +96,7 @@ html
 														input.general(name= "electives", type="checkbox", value=Course.id)
 														label.checkbox-inline= Course.course_name+" ("+Course.course_program+" "+Course.course_number+")"
 								div.panel-group
-									div.panel.panel-danger
+									div#programPanel.panel.panel-danger
 										div.panel-heading
 											h4.panel-title
 												a(data-toggle='collapse', href='#electives-list-3')
