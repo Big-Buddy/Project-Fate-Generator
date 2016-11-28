@@ -58,6 +58,8 @@ pool.connect(function(err, client)
 	}
 });
 
+//This function takes in the information pulled from database, 
+//and stores it into an array of JSON objects that are modified to match the requested input format
 var parseDBArrayToJson = function(DBArray){
 	//loop through full course list:
 	var jsonArrayOfCourses=[];
@@ -122,6 +124,7 @@ var parseDBArrayToJson = function(DBArray){
 	return jsonArrayOfCourses;
 }
 
+//removes an element from JSONArray, matching the CourseID passed in
 var removeJsonElementsByCourseID= function(CourseID, JSONArray){
 	for(elementIndex in JSONArray){
 		if(JSONArray[elementIndex].courseID==CourseID){
@@ -133,51 +136,54 @@ var removeJsonElementsByCourseID= function(CourseID, JSONArray){
 	}
 	return JSONArray;
 }
-
+//removes all courses from JSONArray that match course IDs in CourseIDArray
 var removeJsonElementsByCourseIDArray= function(CourseIDArray, JSONArray){
 	for(courseIDIndex in CourseIDArray)
 		JSONArray=removeJsonElementsByCourseID(CourseIDArray[courseIDIndex],JSONArray);
 	return JSONArray;
 }
-//-------------------------------------------------------------GARBAGE AHEAD----------------------------------------------------
-function createIncompleteList(courses, incompleteCourses)
-{
-    for (i = 0; i < courses.length; i++)
-    {
-       incompleteCourses.push(courses[i]);
-    }
 
+//creates a new array of JSON objects by courseID, pulled from JSONArray that was passed to the function
+var compileCourseListByCourseID= function(CourseID, JSONArray){
+	var courseListByCourseID=[];
+	for(course in JSONArray){
+		for(id in CourseID){
+			if(JSONArray[course].courseID==CourseID[id])
+				courseListByCourseID.push(JSONArray[course])
+			}
+	}
+	return courseListByCourseID;
 }
-function addToPotentialList(term, courses, potentialCourses)
-{
-    for (i = 0; i < courses.length; i++)
-    {
-        for (j = 0; j < courses[i].lectureSections.length; j++)
-        {
-        	console.log(courses[i].lectureSections[j].semester);
-            if (courses[i].lectureSections[j].semester == term)
-            {
-            	console.log("in if");
-                potentialCourses.push(courses[i]);
-                break;
-            }
-        }
-    }
-    for (i = 0; i < potentialCourses.length; i++)
-    {
-        console.log(potentialCourses[i].courseCode + " ");
-    }
+
+//appends secondaryArray to mainArray
+var concatenate2Arrays=function(mainArray, secondaryArray){
+	for(i=0;i<secondaryArray.length;i++){
+		mainArray.push(secondaryArray[i]);
+	}
+	return mainArray;
 }
-//-----------------------------------------------------------END OF GARBAGE------------------------------------------------------
+
+//since completed value comes in a string, where id is the first part of the string delimited by a dot,
+//it picks up that id and stores it into an integer array
+var filterCompletedCourseIDs= function(completed){
+	var completedCourseIDs=[];
+	for(course in completed){
+		completedCourseIDs.push(parseInt(completed[course].split(".")[0]));
+	}
+	return completedCourseIDs;
+}
 exports.parseToJson = function(electives, completed)
 {
 	//loop through full course list:
-	var corseList = parseDBArrayToJson(coreList);
-	var incompleteCourses=[];
-	var potentialCourses=[];
-	createIncompleteList(corseList,incompleteCourses);
-	addToPotentialList("fall",corseList,potentialCourses);
-	console.log(potentialCourses);
+	var parsedCoreList = parseDBArrayToJson(coreList);
+	var parsedElectiveList = parseDBArrayToJson(electivesList);
+	var desiredElectiveList = compileCourseListByCourseID(electives,parsedElectiveList);
+	var remainingCoreList = removeJsonElementsByCourseIDArray(filterCompletedCourseIDs(completed),parsedCoreList);
+	var totalCoursesList = concatenate2Arrays(remainingCoreList,desiredElectiveList);
+	console.log(totalCoursesList);
+	//console.log(compileCourseListByCourseID(electives,parsedElectiveList));
+	
+	//console.log(filterCompletedCourseIDs(completed));
 	//console.log(corseList.lectureSections[1].semester);
 	//parseDBArrayToJson(electivesList);
 	//var completedID = completed.split('.');
