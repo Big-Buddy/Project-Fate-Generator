@@ -70,7 +70,7 @@ sequenceValidator.prototype.validateForm = function()
 	}
 	else if (conflicts.length > 0)
 	{
-		var error = 'Completed Courses Error! You need to fulfill the prerequisites for:';
+		var error = 'Completed Courses Error! You need to fulfill the following prerequisites:';
 
 		for(message in conflicts)
 		{

@@ -22,6 +22,7 @@ var tutorialList=[];
 var jsonStructure = {
 
 }
+
 pool.connect(function(err, client)
 {
 	if (err) 
@@ -128,8 +129,8 @@ var parseDBArrayToJson = function(DBArray){
 var removeJsonElementsByCourseID= function(CourseID, JSONArray){
 	for(elementIndex in JSONArray){
 		if(JSONArray[elementIndex].courseID==CourseID){
-			console.log("elementIndex: "+elementIndex);
-			console.log("Course ID: "+CourseID);
+			//console.log("elementIndex: "+elementIndex);
+			//console.log("Course ID: "+CourseID);
 			JSONArray.splice(elementIndex,1);
 			// console.log(JSONArray);
 		}
@@ -172,6 +173,17 @@ var filterCompletedCourseIDs= function(completed){
 	}
 	return completedCourseIDs;
 }
+
+exports.exportCompletedCourseIDs = function(completed)
+{
+    var completedCourseIDs=[];
+    for(course in completed)
+    {
+        completedCourseIDs.push(parseInt(completed[course].split(".")[0]));
+    }
+    return completedCourseIDs;
+}
+
 exports.parseToJson = function(electives, completed)
 {
 	//loop through full course list:
@@ -180,7 +192,6 @@ exports.parseToJson = function(electives, completed)
 	var desiredElectiveList = compileCourseListByCourseID(electives,parsedElectiveList);
 	var remainingCoreList = removeJsonElementsByCourseIDArray(filterCompletedCourseIDs(completed),parsedCoreList);
 	var totalCoursesList = concatenate2Arrays(remainingCoreList,desiredElectiveList);
-	console.log(totalCoursesList);
 	//console.log(compileCourseListByCourseID(electives,parsedElectiveList));
 	
 	//console.log(filterCompletedCourseIDs(completed));
@@ -196,25 +207,1622 @@ exports.parseToJson = function(electives, completed)
 	//corseList=removeJsonElementsByCourseIDArray(removingID,corseList);
 	//corseList=removeJsonElementsByCourseIDArray(67,corseList);
 	//console.log(corseList);
-	return "hello world";
+	return totalCoursesList;
 };
 
+//SEQUENCE GENERATOR IMPLEMENTATION
 
-//1. get all the core courses (course_type = 0)
-//1.1 parsed all elective
-//1.3 pick out the elective json objects from the full electives list, based on the id's that were passed to me from routes.js
-//1.4 subtract all the courses with ID matching to the one that was passed to me from routes.js
-//3. add all the chosen electives (checked and course_type=1 || course_Type=2 || course_type=3)
-//2. subtract completed courses (checked and course_type = 0)
+//Takes as parameters the list of all courses of the program
+//and an empty incomplete courses list and populates it with thse courses
+function createIncompleteList(courses, incompleteCourses)
+{
+    var i;
+    
+    for(i = 0; i < courses.length; i++)
+    {
+       incompleteCourses.push(JSON.parse(JSON.stringify(courses[i])));
+    }
+    /*
+    for(i = 0; i < incompleteCourses.length; i++)
+    {
+        document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
 
-//FULL LIST SKELETON COMPLETE
+//Takes as parameters the list of incomplete courses and the list of completed courses
+//and removes those that have been completed from the incomplete courses list
+function removeCompletedCourses(incompleteCourses, completeCourses)
+{
+    var i;
+    var j;
+    
+    for(i = 0; i < incompleteCourses.length; i++)
+    {
+        for(j = 0; j < completeCourses.length; j++)
+        {
+            if(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) == completeCourses[j])
+            {
+                incompleteCourses.splice(i, 1);
+                i--;
+            }
+        }
+    }
+    /*
+    for(i = 0; i < incompleteCourses.length; i++)
+    {
+        document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
 
-//4. add all lectures sections to each course
-//5. add all tutorial sections to each course
-//6. add all lab sections to each course
+//Takes as parameters the type of semester, the list of all incomplete courses and
+//an empty potential course list and populates it with courses that are offered in the same term
+function addToPotentialList(term, incompleteCourses, potentialCourses)
+{
+    var i;
+    var j;
+    
+    for(i = 0; i < incompleteCourses.length; i++)
+    {
+        for(j = 0; j < incompleteCourses[i].lectureSections.length; j++)
+        {
+            if(incompleteCourses[i].lectureSections[j].semester == term)
+            {
+                potentialCourses.push(JSON.parse(JSON.stringify(incompleteCourses[i])));
+                break;
+            }
+        }
+    }
+    /*
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
 
-//FULL LIST COMPLETE
 
-//*** The following should be done in the context of a separate page where the sequence is displayed, not user_prof***
-//1. Pass Full List to sequence algorithm
-//2. Display output   
+//Takes as parameters the list of potential courses and 
+//the list of all incomplete courses and removes all 400 level courses 
+//from the potential course list if there are any incomplete 200 level courses
+function remove400LevelCourses(potentialCourses, incompleteCourses)
+{
+    var i;
+    var remove400 = false;
+
+    for(i = 0; i < incompleteCourses.length; i++)
+    {
+        if (JSON.stringify(incompleteCourses[i].course_number)[0] == '2')
+        {
+            remove400 = true;
+            break;
+        }
+    }
+    if(remove400 == true)
+    {
+        for (i = 0; i < potentialCourses.length; i++)
+        {
+            if (JSON.stringify(potentialCourses[i].course_number)[0] == '4')
+            {
+                
+                potentialCourses.splice(i, 1)
+                i--;
+            }
+        }
+    }
+    /*
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
+
+//Takes as parameters the list of potential courses and the list of completed courses
+//and removes any courses from the potential course list
+//that require prerequisites if they have not yet been completed
+function removeIncompletePrerequisiteCourses(potentialCourses, completeCourses)
+{
+    var i;
+    var j;
+    var k;
+    var completedPrerequisites = 0;
+    
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        for(j = 0; j < potentialCourses[i].prerequisites.length; j++)
+        {
+            for(k = 0; k < completeCourses.length; k++)
+            {
+                if(potentialCourses[i].prerequisites[j] == completeCourses[k])
+                {
+                    completedPrerequisites++;
+                }
+            }
+            if(completedPrerequisites != potentialCourses[i].prerequisites.length)
+            {
+                potentialCourses.splice(i, 1)
+                i--;
+            }
+        }
+    }
+    /*
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
+
+//Takes as parameters the list of potential courses and
+//an empty low priority list and uses it to sort the courses by their priority
+function sortPotentialList(potentialCourses, lowPriorityCourses)
+{
+    var i;
+    var j;
+    
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        var currentLowIndex = 0;
+        var currentLowPriority = potentialCourses[0].priority;
+        
+        for(j = 0; j < potentialCourses.length; j++)
+        {
+            if(potentialCourses[j].priority < currentLowPriority)
+            {
+                currentLowIndex = j;
+                currentLowPriority = potentialCourses[j].priority;
+            }
+        }
+        
+        lowPriorityCourses.push(JSON.parse(JSON.stringify(potentialCourses[currentLowIndex])));
+        potentialCourses.splice(currentLowIndex, 1);
+        i--; 
+    }
+    for(i = 0; i < lowPriorityCourses.length; i++)
+    {
+        potentialCourses.push(JSON.parse(JSON.stringify(lowPriorityCourses[i])));
+        lowPriorityCourses.splice(lowPriorityCourses[i], 1);
+        i--;
+    }
+    /*
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
+
+//Takes as parameters the users preference for courses per semester, an empty list of online courses,
+//the list of potential courses and an empty low priority list and adds the low priority courses to it
+//whilst removeing them from the potential course list
+//If the low priority course is an online course it is removed
+//from the potential course list and added to the online course list
+function selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses)
+{
+    var i;
+    
+    for (i = 0; i < potentialCourses.length - (coursesPerSemester - 1); i++)
+    {
+       lowPriorityCourses.push(JSON.parse(JSON.stringify(potentialCourses[potentialCourses.length - 1])));
+       potentialCourses.pop();
+       i--;
+    }
+    if(lowPriorityCourses.length > 0)
+    {    
+        potentialCourses.push(JSON.parse(JSON.stringify(lowPriorityCourses[0])));
+        lowPriorityCourses.shift();
+    }
+    for (i = 0; i < potentialCourses.length; i++)
+    {
+        if(potentialCourses[i].lectureSections[0].section_code == "EC")
+        {
+            onlineCourses.push(JSON.parse(JSON.stringify(potentialCourses[i])));
+            potentialCourses.splice(i, 1);
+            i--;
+        }
+    }
+    /*
+    for (i = 0; i < potentialCourses.length; i++)
+    {
+        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
+    }
+    document.write("<br>");
+    document.write("<br>");
+    */
+}
+
+//Takes as parameters the type of semester and the potential course list
+//and creates and returns an array with counters for the conflicts
+//between sections of the potential courses with all initialized to 0
+function initializeConflictCounterForSections(term, potentialCourses)
+{
+    var i;
+    var j;
+    var k;
+    var numLectureSections = 0;
+    var termLectureSection = 0;;
+    var createConflictArray = new Array(potentialCourses.length);
+    
+    for(i = 0; i < createConflictArray.length; i++)
+    {
+        createConflictArray[i] = new Array(3);
+    }
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+       if(potentialCourses[i].lectureSections.section_code != "EC")
+       {
+            for (j = 0; j < potentialCourses[i].lectureSections.length; j++)
+            {
+                if(potentialCourses[i].lectureSections[j].semester == term)
+                {
+                    numLectureSections++;
+                    termLectureSection = j;
+                }
+            }
+        }
+        if(potentialCourses[i].lectureSections.section_code != "EC")
+        {
+            createConflictArray[i][0] = new Array(numLectureSections);
+            createConflictArray[i][1] = new Array(potentialCourses[i].lectureSections[termLectureSection].tutorialSections.length * numLectureSections)
+            createConflictArray[i][2] = new Array(potentialCourses[i].lectureSections[termLectureSection].labSections.length * potentialCourses[i].lectureSections.length)
+            numLectureSections = 0;
+        }
+        if(potentialCourses[i].lectureSections.section_code == "EC")
+        {
+            createConflictArray[i][0] = new Array(1);
+            createConflictArray[i][1] = new Array(0)
+            createConflictArray[i][2] = new Array(0)
+        }
+    }
+    for(i = 0; i < createConflictArray.length; i++)
+    {
+        for(j = 0; j < createConflictArray[i].length; j++)
+        {
+            for(k = 0; k < createConflictArray[i][j].length; k++)
+            {
+                createConflictArray[i][j][k] = 0;
+            }
+        }
+    }
+    /*
+    for(i = 0; i < createConflictArray.length; i++)
+    {
+        for(j = 0; j < createConflictArray[i].length; j++)
+        {
+            for(k = 0; k < createConflictArray[i][j].length; k++)
+            {
+                document.write(createConflictArray[i][j][k] + " ");
+            }
+            document.write("<br>");
+        }
+    }
+    document.write("<br>");
+    */
+    return createConflictArray;
+}
+
+//Takes as parameters the type of semester, the potential course list
+//and the list of conflicts for each section and tests for conflicts between
+//sections while increment corresponding counters if a conflict is found
+function countTimeConflicts(term, potentialCourses, conflictCounterForSections)
+{
+    var a;
+    var i;
+    var j;
+    var k;
+    var l;
+    var x;
+    var y;
+    var z;
+    var termCourseSection1;
+    var termCourseSection2;
+    var invalidTermSections = 0;
+    
+    for(i = 0; i < potentialCourses.length; i++)
+    {
+        for(j = 0; j < potentialCourses.length; j++)
+        {
+            if(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) != potentialCourses[j].course_program.concat(potentialCourses[j].course_number))
+            {
+                for(a = 0; a < potentialCourses[i].lectureSections.length; a++)
+                {
+                    if(potentialCourses[i].lectureSections[a].semester == term)
+                    {
+                        termCourseSection1 = a;
+                        break;
+                    }
+                }
+
+                for(a = 0; a < potentialCourses[j].lectureSections.length; a++)
+                {
+                    if(potentialCourses[j].lectureSections[a].semester == term)
+                    {
+                        termCourseSection2 = a;
+                        break;
+                    }
+                }
+                
+                //////////////////////////////////////////////////////////////
+              
+                for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                {
+                    if(potentialCourses[i].lectureSections[k].semester != term)
+                    {
+                        invalidTermSections++;
+                    }
+                    if(potentialCourses[i].lectureSections[k].semester == term)
+                    {
+                        for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                        {
+                            if(potentialCourses[j].lectureSections[l].semester == term)
+                            {
+                                for(z = 0; z < 7; z++)
+                                {
+                                    if((potentialCourses[i].lectureSections[k].days[z] == potentialCourses[j].lectureSections[l].days[z]) && (potentialCourses[i].lectureSections[k].days[z] != "-"))
+                                    {
+                                        if((potentialCourses[i].lectureSections[k].end_time >= potentialCourses[j].lectureSections[l].start_time) && (potentialCourses[i].lectureSections[k].end_time <= potentialCourses[j].lectureSections[l].end_time))
+                                        {
+                                            conflictCounterForSections[i][0][k - invalidTermSections]++;
+                                        }
+                                        if((potentialCourses[j].lectureSections[l].end_time >= potentialCourses[i].lectureSections[k].start_time) && (potentialCourses[j].lectureSections[l].end_time <= potentialCourses[i].lectureSections[k].end_time))
+                                        {
+                                            conflictCounterForSections[i][0][k - invalidTermSections]++;
+                                        }
+                                    }
+                                }    
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+                
+                if(potentialCourses[j].lectureSections[termCourseSection2].tutorialSections.length > 0)
+                {
+                    for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                    {
+                        if(potentialCourses[i].lectureSections[k].semester != term)
+                        {
+                            invalidTermSections++;
+                        }
+                        if(potentialCourses[i].lectureSections[k].semester == term)
+                        {
+                            for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                            {
+                                if(potentialCourses[j].lectureSections[l].semester == term)
+                                {
+                                    for(x = 0; x < potentialCourses[j].lectureSections[l].tutorialSections.length; x++)
+                                    {
+                                        for(z = 0; z < 7; z++)
+                                        {
+                                            if((potentialCourses[i].lectureSections[k].days[z] == potentialCourses[j].lectureSections[l].tutorialSections[x].days[z]) && (potentialCourses[i].lectureSections[k].days[z] != "-"))
+                                            {
+                                                if((potentialCourses[i].lectureSections[k].end_time >= potentialCourses[j].lectureSections[l].tutorialSections[x].start_time) && (potentialCourses[i].lectureSections[k].end_time <= potentialCourses[j].lectureSections[l].tutorialSections[x].end_time))
+                                                {
+                                                    conflictCounterForSections[i][0][k - invalidTermSections]++;
+                                                }
+                                                if((potentialCourses[j].lectureSections[l].tutorialSections[x].end_time >= potentialCourses[i].lectureSections[k].start_time) && (potentialCourses[j].lectureSections[l].tutorialSections[x].end_time <= potentialCourses[i].lectureSections[k].end_time))
+                                                {
+                                                    conflictCounterForSections[i][0][k - invalidTermSections]++;
+                                                }
+                                            }
+                                        } 
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+
+                if(potentialCourses[j].lectureSections[termCourseSection2].labSections.length > 0)
+                {
+                    for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                    {
+                        if(potentialCourses[i].lectureSections[k].semester != term)
+                        {
+                            invalidTermSections++;
+                        }
+                        if(potentialCourses[i].lectureSections[k].semester == term)
+                        {
+                            for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                            {
+                                if(potentialCourses[j].lectureSections[l].semester == term)
+                                {
+                                    for(x = 0; x < potentialCourses[j].lectureSections[l].labSections.length; x++)
+                                    {
+                                        for(z = 0; z < 7; z++)
+                                        {
+                                            if((potentialCourses[i].lectureSections[k].days[z] == potentialCourses[j].lectureSections[l].labSections[x].days[z]) && (potentialCourses[i].lectureSections[k].days[z] != "-"))
+                                            {
+                                                if((potentialCourses[i].lectureSections[k].end_time >= potentialCourses[j].lectureSections[l].labSections[x].start_time) && (potentialCourses[i].lectureSections[k].end_time <= potentialCourses[j].lectureSections[l].labSections[x].end_time))
+                                                {
+                                                    conflictCounterForSections[i][0][k - invalidTermSections]++;
+                                                }
+                                                if((potentialCourses[j].lectureSections[l].labSections[x].end_time >= potentialCourses[i].lectureSections[k].start_time) && (potentialCourses[j].lectureSections[l].labSections[x].end_time <= potentialCourses[i].lectureSections[k].end_time))
+                                                {
+                                                    conflictCounterForSections[i][0][k - invalidTermSections]++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+                
+                //////////////////////////////////////////////////////////////////////////////////////
+
+                if(potentialCourses[i].lectureSections[termCourseSection1].tutorialSections.length > 0)
+                {
+                    for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                    {
+                        if(potentialCourses[i].lectureSections[k].semester != term)
+                        {
+                            invalidTermSections++;
+                        }
+                        if(potentialCourses[i].lectureSections[k].semester == term)
+                        {
+                            for(x = 0; x < potentialCourses[i].lectureSections[k].tutorialSections.length; x++)
+                            {
+                                for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                                {
+                                    if(potentialCourses[j].lectureSections[l].semester == term)
+                                    {
+                                        for(z = 0; z < 7; z++)
+                                        {
+                                            if((potentialCourses[i].lectureSections[k].tutorialSections[x].days[z] == potentialCourses[j].lectureSections[l].days[z])  && (potentialCourses[i].lectureSections[k].tutorialSections[x].days[z] != "-"))
+                                            {
+                                                if((potentialCourses[i].lectureSections[k].tutorialSections[x].end_time >= potentialCourses[j].lectureSections[l].start_time) && (potentialCourses[i].lectureSections[k].tutorialSections[x].end_time <= potentialCourses[j].lectureSections[l].end_time))
+                                                {
+                                                    conflictCounterForSections[i][1][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                }
+                                                if((potentialCourses[j].lectureSections[l].end_time >= potentialCourses[i].lectureSections[k].tutorialSections[x].start_time) && (potentialCourses[j].lectureSections[l].end_time <= potentialCourses[i].lectureSections[k].tutorialSections[x].end_time))
+                                                {
+                                                    conflictCounterForSections[i][1][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+
+                if(potentialCourses[i].lectureSections[termCourseSection1].tutorialSections.length > 0)
+                {
+                    if(potentialCourses[j].lectureSections[termCourseSection2].tutorialSections.length > 0)
+                    {
+                        for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                        {
+                            if(potentialCourses[i].lectureSections[k].semester != term)
+                            {
+                                invalidTermSections++;
+                            }
+                            if(potentialCourses[i].lectureSections[k].semester == term)
+                            {
+                                for(x = 0; x < potentialCourses[i].lectureSections[k].tutorialSections.length; x++)
+                                {
+                                    for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                                    {
+                                        if(potentialCourses[j].lectureSections[l].semester == term)
+                                        {
+                                            for(y = 0; y < potentialCourses[j].lectureSections[l].tutorialSections.length; y++)
+                                            {
+                                                for(z = 0; z < 7; z++)
+                                                {
+                                                    if((potentialCourses[i].lectureSections[k].tutorialSections[x].days[z] == potentialCourses[j].lectureSections[l].tutorialSections[y].days[z]) && (potentialCourses[i].lectureSections[k].tutorialSections[x].days[z] != "-"))
+                                                    {
+                                                        if((potentialCourses[i].lectureSections[k].tutorialSections[x].end_time >= potentialCourses[j].lectureSections[l].tutorialSections[y].start_time) && (potentialCourses[i].lectureSections[k].tutorialSections[x].end_time <= potentialCourses[j].lectureSections[l].tutorialSections[y].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][1][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                        if((potentialCourses[j].lectureSections[l].tutorialSections[y].end_time >= potentialCourses[i].lectureSections[k].tutorialSections[x].start_time) && (potentialCourses[j].lectureSections[l].tutorialSections[y].end_time <= potentialCourses[i].lectureSections[k].tutorialSections[x].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][1][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+                
+                if(potentialCourses[i].lectureSections[termCourseSection1].tutorialSections.length > 0)
+                {
+                    if(potentialCourses[j].lectureSections[termCourseSection2].labSections.length > 0)
+                    {
+                        for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                        {
+                            if(potentialCourses[i].lectureSections[k].semester != term)
+                            {
+                                invalidTermSections++;
+                            }
+                            if(potentialCourses[i].lectureSections[k].semester == term)
+                            {
+                                for(x = 0; x < potentialCourses[i].lectureSections[k].tutorialSections.length; x++)
+                                {
+                                    for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                                    {
+                                        if(potentialCourses[j].lectureSections[l].semester == term)
+                                        {
+                                            for(y = 0; y < potentialCourses[j].lectureSections[l].labSections.length; y++)
+                                            {
+                                                for(z = 0; z < 7; z++)
+                                                {
+                                                    if((potentialCourses[i].lectureSections[k].tutorialSections[x].days[z] == potentialCourses[j].lectureSections[l].labSections[y].days[z]) && (potentialCourses[i].lectureSections[k].tutorialSections[x].days[z] != "-"))
+                                                    {
+                                                        if((potentialCourses[i].lectureSections[k].tutorialSections[x].end_time >= potentialCourses[j].lectureSections[l].labSections[y].start_time) && (potentialCourses[i].lectureSections[k].tutorialSections[x].end_time <= potentialCourses[j].lectureSections[l].labSections[y].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][1][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                        if((potentialCourses[j].lectureSections[l].labSections[y].end_time >= potentialCourses[i].lectureSections[k].tutorialSections[x].start_time) && (potentialCourses[j].lectureSections[l].labSections[y].end_time <= potentialCourses[i].lectureSections[k].tutorialSections[x].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][1][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+                
+                /////////////////////////////////////////////////////////////////////////////////
+               
+                if(potentialCourses[i].lectureSections[termCourseSection1].labSections.length > 0)
+                {
+                    for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                    {
+                        if(potentialCourses[i].lectureSections[k].semester != term)
+                        {
+                            invalidTermSections++;
+                        }
+                        if(potentialCourses[i].lectureSections[k].semester == term)
+                        {
+                            for(x = 0; x < potentialCourses[i].lectureSections[k].labSections.length; x++)
+                            {
+                                for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                                {
+                                    if(potentialCourses[j].lectureSections[l].semester == term)
+                                    {
+                                        for(z = 0; z < 7; z++)
+                                        {
+                                            if((potentialCourses[i].lectureSections[k].labSections[x].days[z] == potentialCourses[j].lectureSections[l].days[z]) && (potentialCourses[i].lectureSections[k].labSections[x].days[z] != "-"))
+                                            {
+                                                if((potentialCourses[i].lectureSections[k].labSections[x].end_time >= potentialCourses[j].lectureSections[l].start_time) && (potentialCourses[i].lectureSections[k].labSections[x].end_time <= potentialCourses[j].lectureSections[l].end_time))
+                                                {
+                                                    conflictCounterForSections[i][2][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                }
+                                                if((potentialCourses[j].lectureSections[l].end_time >= potentialCourses[i].lectureSections[k].labSections[x].start_time) && (potentialCourses[j].lectureSections[l].end_time <= potentialCourses[i].lectureSections[k].labSections[x].end_time))
+                                                {
+                                                    conflictCounterForSections[i][2][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+              
+                if(potentialCourses[i].lectureSections[termCourseSection1].labSections.length > 0)
+                {
+                    if(potentialCourses[j].lectureSections[termCourseSection2].tutorialSections.length > 0)
+                    {
+                        for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                        {
+                            if(potentialCourses[i].lectureSections[k].semester != term)
+                            {
+                                invalidTermSections++;
+                            }
+                            if(potentialCourses[i].lectureSections[k].semester == term)
+                            {
+                                for(x = 0; x < potentialCourses[i].lectureSections[k].labSections.length; x++)
+                                {
+                                    for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                                    {
+                                        if(potentialCourses[j].lectureSections[l].semester == term)
+                                        {
+                                            for(y = 0; y < potentialCourses[j].lectureSections[l].tutorialSections.length; y++)
+                                            {
+                                               for(z = 0; z < 7; z++)
+                                                {
+                                                    if((potentialCourses[i].lectureSections[k].labSections[x].days[z] == potentialCourses[j].lectureSections[l].tutorialSections[y].days[z]) && (potentialCourses[i].lectureSections[k].labSections[x].days[z] != "-"))
+                                                    {
+                                                        if((potentialCourses[i].lectureSections[k].labSections[x].end_time >= potentialCourses[j].lectureSections[l].tutorialSections[y].start_time) && (potentialCourses[i].lectureSections[k].labSections[x].end_time <= potentialCourses[j].lectureSections[l].tutorialSections[y].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][2][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                        if((potentialCourses[j].lectureSections[l].tutorialSections[y].end_time >= potentialCourses[i].lectureSections[k].labSections[x].start_time) && (potentialCourses[j].lectureSections[l].tutorialSections[y].end_time <= potentialCourses[i].lectureSections[k].labSections[x].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][2][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                invalidTermSections = 0;
+
+                if(potentialCourses[i].lectureSections[termCourseSection1].labSections.length > 0)
+                {
+                    if(potentialCourses[j].lectureSections[termCourseSection2].labSections.length > 0)
+                    {
+                        for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
+                        {
+                            if(potentialCourses[i].lectureSections[k].semester != term)
+                            {
+                                invalidTermSections++;
+                            }
+                            if(potentialCourses[i].lectureSections[k].semester == term)
+                            {
+                                for(x = 0; x < potentialCourses[i].lectureSections[k].labSections.length; x++)
+                                {
+                                    for(l = 0; l < potentialCourses[j].lectureSections.length; l++)
+                                    {
+                                        if(potentialCourses[j].lectureSections[l].semester == term)
+                                        {
+                                            for(y = 0; y < potentialCourses[j].lectureSections[l].labSections.length; y++)
+                                            {
+                                                for(z = 0; z < 7; z++)
+                                                {
+                                                    if((potentialCourses[i].lectureSections[k].labSections[x].days[z] == potentialCourses[j].lectureSections[l].labSections[y].days[z]) && (potentialCourses[i].lectureSections[k].labSections[x].days[z] != "-"))
+                                                    {
+                                                        if((potentialCourses[i].lectureSections[k].labSections[x].end_time >= potentialCourses[j].lectureSections[l].labSections[y].start_time) && (potentialCourses[i].lectureSections[k].labSections[x].end_time <= potentialCourses[j].lectureSections[l].labSections[y].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][2][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                        if((potentialCourses[j].lectureSections[l].labSections[y].end_time >= potentialCourses[i].lectureSections[k].labSections[x].start_time) && (potentialCourses[j].lectureSections[l].labSections[y].end_time <= potentialCourses[i].lectureSections[k].labSections[x].end_time))
+                                                        {
+                                                            conflictCounterForSections[i][2][x + ((k - invalidTermSections) * potentialCourses[i].lectureSections.length)]++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /*
+    for(i = 0; i < conflictCounterForSections.length; i++)
+    {
+        for (j = 0; j < conflictCounterForSections[i].length; j++)
+        {
+            for (k = 0; k < conflictCounterForSections[i][j].length; k++)
+            {
+                document.write(conflictCounterForSections[i][j][k] + " ");
+            }
+            document.write("<br>");
+        }
+    }
+    document.write("<br>");
+    */
+}
+
+//Takes as parameters the potential course list, the list of conflicts for each section
+//and finds the sections with the least conflicts for each course and adds them to an
+//empty poential course sections list and then checks for conflictions between courses
+//already in the list and tries to replace the sectons that conflict,if a replacement isnt
+//found the course is removed from the list of potential cours sections
+function selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections)
+{
+    var i;
+    var j;
+    var k;
+    var z;
+    var restore;
+    var lowestConflicts = 100
+    var lowestConflictLectureIndex = 0;
+    var lowestConflictTutorialIndex = 0;
+    var lowestConflictLabIndex = 0;
+    var iterated = 0;
+    var removed = 0;
+    var restart = true;
+    var conflict = false;
+    var removeCourse = false;
+    
+    for (i = 0; i < potentialCourses.length; i++)
+    {
+        if(potentialCourseSections.length < coursesPerSemester)
+        {
+            restart = true;
+            conflict = false;
+            removeCourse = false;
+
+            //document.write(potentialCourses[i].course_number + "<br>");
+
+            lowestConflicts = 100;
+
+            for(j = 0; j < potentialCourses[i].lectureSections.length; j++)
+            {
+                if(conflictCounterForSections[i][0][j] < lowestConflicts)
+                {
+                    lowestConflicts = conflictCounterForSections[i][0][j];
+                    lowestConflictLectureIndex = j;
+                }
+            }
+
+            lowestConflicts = 100;
+
+            for(j = 0; j < potentialCourses[i].lectureSections[lowestConflictLectureIndex].tutorialSections.length; j++)
+            {
+                if(conflictCounterForSections[i][1][j + (lowestConflictLectureIndex * potentialCourses[i].lectureSections.length)] < lowestConflicts)
+                {
+                    lowestConflicts = conflictCounterForSections[i][1][j];
+                    lowestConflictTutorialIndex = j;
+                }
+            }
+
+            lowestConflicts = 100;
+
+            for(j = 0; j < potentialCourses[i].lectureSections[lowestConflictLectureIndex].labSections.length; j++)
+            {
+                if(conflictCounterForSections[i][2][j + (lowestConflictTutorialIndex * potentialCourses[i].lectureSections.length)] < lowestConflicts)
+                {
+                    lowestConflicts = conflictCounterForSections[i][2][j];
+                    lowestConflictLabIndex = j;
+                }
+            }
+
+            /*
+            document.write("Lecture Section: " + lowestConflictLectureIndex + "<br>");
+
+            if(potentialCourses[i].lectureSections[lowestConflictLectureIndex].tutorialSections.length > 0)
+            {
+                document.write("Tutorial Section: " + lowestConflictTutorialIndex + "<br>");
+            }
+            if(potentialCourses[i].lectureSections[lowestConflictLectureIndex].labSections.length > 0)
+            {
+                document.write("Lab Section: " + lowestConflictLabIndex + "<br>");
+            }
+            */
+
+            /////////////////////////////////////////////////////////////////////////////////
+
+            potentialCourseSections.push(JSON.parse(JSON.stringify(potentialCourses[i])));
+
+            /////////////////////////////////////////////////////////////////////////////////
+
+            //document.write(" # of Courses in potential list = " + potentialCourseSections.length + "<br>");
+            iterated = 0;
+            restore = lowestConflictLectureIndex;
+
+            for(j = 0; j < potentialCourseSections[i - removed].lectureSections.length; j++)
+            {
+                if(j != lowestConflictLectureIndex)
+                {
+                    potentialCourseSections[i - removed].lectureSections.splice(j, 1);
+                    lowestConflictLectureIndex--;
+                    j--;
+                }
+            }
+
+            lowestConflictLectureIndex = restore;
+            restore = lowestConflictTutorialIndex;
+
+            for(j = 0; j < potentialCourseSections[i - removed].lectureSections[0].tutorialSections.length; j++)
+            {
+                if(j != lowestConflictTutorialIndex)
+                {
+                    potentialCourseSections[i - removed].lectureSections[0].tutorialSections.splice(j, 1);
+                    lowestConflictTutorialIndex--;
+                    j--;
+                }
+            }
+
+            lowestConflictTutorialIndex = restore;
+            restore = lowestConflictLabIndex;
+
+            for(j = 0; j < potentialCourseSections[i - removed].lectureSections[0].labSections.length; j++)
+            {
+                if(j != lowestConflictLabIndex)
+                {
+                    potentialCourseSections[i - removed].lectureSections[0].labSections.splice(j, 1);
+                    lowestConflictLabIndex--;
+                    j--;
+                }
+            }
+
+            lowestConflictLabIndex = restore;
+
+            /////////////////////////////////////////////////////////////////////////////////
+
+            while(restart == true)
+            {
+                restart = false;
+
+                for(j = 0; j < potentialCourseSections.length; j++)
+                {
+                    k = potentialCourseSections.length - 1;
+
+                    //document.write("Check conflict " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + " with " + potentialCourseSections[j].course_program.concat(potentialCourseSections[j].course_number) + "<br>");
+                    
+                    if(potentialCourseSections[j].course_program.concat(potentialCourseSections[j].course_number) != potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number))
+                    {
+                        /////////////////////////////////////////////////////////////////////////////////
+                        
+                        //document.write("CHECK 1 <br>");
+                        while(true)
+                        {
+                            for(z = 0; z < 7; z++)
+                            {
+                                if((potentialCourseSections[j].lectureSections[0].days[z] == potentialCourseSections[k].lectureSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].days[z] != "-"))
+                                {
+                                    if((potentialCourseSections[j].lectureSections[0].end_time >= potentialCourseSections[k].lectureSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].end_time <= potentialCourseSections[k].lectureSections[0].end_time))
+                                    {
+                                        //document.write("Lecture - Lecture Conflict <br>");
+                                        conflict = true;
+                                        break;
+                                    }
+                                    if((potentialCourseSections[k].lectureSections[0].end_time >= potentialCourseSections[j].lectureSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].end_time <= potentialCourseSections[j].lectureSections[0].end_time))
+                                    {
+                                        //document.write("Lecture - Lecture Conflict <br>");
+                                        conflict = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(iterated == potentialCourses[k + removed].lectureSections.length)
+                            {
+                                //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                removeCourse = true;
+                                break;
+                            }
+                            if(conflict == true)
+                            {
+                                //document.write("CHANGE SECTION <br>");
+                                restart = true;
+                                conflict = false;
+                                iterated++;
+                                potentialCourseSections[k].lectureSections[0] = JSON.parse(JSON.stringify(potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length]));
+                                break;
+                            }
+                            if(conflict == false)
+                            {
+                                //document.write("NO Lecture - Lecture Conflict <br>");
+                                break;
+                            }
+                        }
+                        if(removeCourse == true)
+                        {
+                            potentialCourseSections.pop();
+                            restart = false;
+                            removed++;
+                            iterated = 0;
+                            break;
+                        }
+                        if(restart == true)
+                        {
+                            break;
+                        }
+                        
+                        //document.write("CHECK 2 <br>");
+                        if(potentialCourseSections[j].lectureSections[0].tutorialSections.length > 0)
+                        {
+                            while(true)
+                            {
+                                for(z = 0; z < 7; z++)
+                                {
+                                    if((potentialCourseSections[j].lectureSections[0].tutorialSections[0].days[z] == potentialCourseSections[k].lectureSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].tutorialSections[0].days[z] != "-"))
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time >= potentialCourseSections[k].lectureSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time <= potentialCourseSections[k].lectureSections[0].end_time))
+                                        {
+                                            //document.write("Lecture - Tutorial Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                        if((potentialCourseSections[k].lectureSections[0].end_time >= potentialCourseSections[j].lectureSections[0].tutorialSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].end_time <= potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time))
+                                        {
+                                            //document.write("Lecture - Tutorial Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(iterated == potentialCourses[k + removed].lectureSections.length)
+                                {
+                                    //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                    removeCourse = true;
+                                    break;
+                                }
+                                if(conflict == true)
+                                {
+                                    //document.write("CHANGE SECTION <br>");
+                                    restart = true;
+                                    conflict = false;
+                                    iterated++;
+                                    potentialCourseSections[k].lectureSections[0] = JSON.parse(JSON.stringify(potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length]));
+                                    break;
+                                }
+                                if(conflict == false)
+                                {
+                                    //document.write("NO Lecture - Tutorial Conflict <br>");
+                                    break;
+                                }
+                            }
+                            if(removeCourse == true)
+                            {
+                                potentialCourseSections.pop();
+                                restart = false;
+                                removed++;
+                                iterated = 0;
+                                break;
+                            }
+                            if(restart == true)
+                            {
+                                break;
+                            }
+                        }
+                        
+                        //document.write("CHECK 3 <br>");
+                        if(potentialCourseSections[j].lectureSections[0].labSections.length > 0)
+                        {
+                            //document.write("HAS LABS");
+                            while(true)
+                            {
+                                for(z = 0; z < 7; z++)
+                                {
+                                    if((potentialCourseSections[j].lectureSections[0].labSections[0].days[z] == potentialCourseSections[k].lectureSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].labSections[0].days[z] != "-"))
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].labSections[0].end_time >= potentialCourseSections[k].lectureSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].labSections[0].end_time <= potentialCourseSections[k].lectureSections[0].end_time))
+                                        {
+                                            //document.write("Lecture - Lab Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                        if((potentialCourseSections[k].lectureSections[0].end_time >= potentialCourseSections[j].lectureSections[0].labSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].end_time <= potentialCourseSections[j].lectureSections[0].labSections[0].end_time))
+                                        {
+                                            //document.write("Lecture - Lab Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(iterated == potentialCourses[k + removed].lectureSections.length)
+                                {
+                                    //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                    removeCourse = true;
+                                    break;
+                                }
+                                if(conflict == true)
+                                {
+                                    //document.write("CHANGE SECTION <br>");
+                                    restart = true;
+                                    conflict = false;
+                                    iterated++;
+                                    potentialCourseSections[k].lectureSections[0] = JSON.parse(JSON.stringify(potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length]));
+                                    break;
+                                }
+                                if(conflict == false)
+                                {
+                                    //document.write("NO Lecture - Lab Conflict <br>");
+                                    break;
+                                }
+                            }
+                            if(removeCourse == true)
+                            {
+                                potentialCourseSections.pop();
+                                restart = false;
+                                removed++;
+                                iterated = 0;
+                                break;
+                            }
+                            if(restart == true)
+                            {
+                                break;
+                            }
+                        }
+
+                        /////////////////////////////////////////////////////////////////////////////////
+                        
+                        //document.write("CHECK 4 <br>");
+                        if(potentialCourseSections[k].lectureSections[0].tutorialSections.length > 0)
+                        {
+                            while(true)
+                            {
+                                for(z = 0; z < 7; z++)
+                                {
+                                    if((potentialCourseSections[j].lectureSections[0].days[z] == potentialCourseSections[k].lectureSections[0].tutorialSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].days[z] != "-"))
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].end_time >= potentialCourseSections[k].lectureSections[0].tutorialSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].end_time <= potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time))
+                                        {
+                                            //document.write("Tutorial - Lecture Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                        if((potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time >= potentialCourseSections[j].lectureSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time <= potentialCourseSections[j].lectureSections[0].end_time))
+                                        {
+                                            //document.write("Tutorial - Lecture Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(iterated == potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections.length)
+                                {
+                                    //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                    removeCourse = true;
+                                    break;
+                                }
+                                if(conflict == true)
+                                {
+                                    //document.write("CHANGE SECTION <br>");
+                                    restart = true;
+                                    conflict = false;
+                                    iterated++;
+                                    potentialCourseSections[k].lectureSections[0].tutorialSections[0] = potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections[(lowestConflictTutorialIndex + 1) % potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections.length]
+                                    break;
+                                }
+                                if(conflict == false)
+                                {
+                                    //document.write("NO Tutorial - Lecture Conflict <br>");
+                                    break;
+                                }
+                            }
+                            if(removeCourse == true)
+                            {
+                                potentialCourseSections.pop();
+                                restart = false;
+                                removed++;
+                                iterated = 0;
+                                break;
+                            }
+                            if(restart == true)
+                            {
+                                break;
+                            }
+                        }
+                        
+                        //document.write("CHECK 5 <br>");
+                        if(potentialCourseSections[j].lectureSections[0].tutorialSections.length > 0)
+                        {
+                            if(potentialCourseSections[k].lectureSections[0].tutorialSections.length > 0)
+                            {
+                                while(true)
+                                {
+                                    for(z = 0; z < 7; z++)
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].tutorialSections[0].days[z] == potentialCourseSections[k].lectureSections[0].tutorialSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].tutorialSections[0].days[z] != "-"))
+                                        {
+                                            if((potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time >= potentialCourseSections[k].lectureSections[0].tutorialSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time <= potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time))
+                                            {
+                                                //document.write("Tutorial - Tutorial Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                            if((potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time >= potentialCourseSections[j].lectureSections[0].tutorialSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time <= potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time))
+                                            {
+                                                //document.write("Tutorial - Tutorial Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(iterated == potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections.length)
+                                    {
+                                        //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                        removeCourse = true;
+                                        break;
+                                    }
+                                    if(conflict == true)
+                                    {
+                                        //document.write("CHANGE SECTION <br>");
+                                        restart = true;
+                                        conflict = false;
+                                        iterated++;
+                                        potentialCourseSections[k].lectureSections[0].tutorialSections[0] = potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections[(lowestConflictTutorialIndex + 1) % potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections.length]
+                                        break;
+                                    }
+                                    if(conflict == false)
+                                    {
+                                        //document.write("NO Tutorial - Tutorial Conflict <br>");
+                                        break;
+                                    }
+                                }
+                                if(removeCourse == true)
+                                {
+                                    potentialCourseSections.pop();
+                                    restart = false;
+                                    removed++;
+                                    iterated = 0;
+                                    break;
+                                }
+                                if(restart == true)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        //document.write("CHECK 6 <br>");
+                        if(potentialCourseSections[j].lectureSections[0].labSections.length > 0)
+                        {
+                            if(potentialCourseSections[k].lectureSections[0].tutorialSections.length > 0)
+                            {
+                                while(true)
+                                {
+                                    for(z = 0; z < 7; z++)
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].labSections[0].days[z] == potentialCourseSections[k].lectureSections[0].tutorialSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].labSections[0].days[z] != "-"))
+                                        {
+                                            if((potentialCourseSections[j].lectureSections[0].labSections[0].end_time >= potentialCourseSections[k].lectureSections[0].tutorialSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].labSections[0].end_time <= potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time))
+                                            {
+                                                //document.write("Tutorial - Lab Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                            if((potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time >= potentialCourseSections[j].lectureSections[0].labSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].tutorialSections[0].end_time <= potentialCourseSections[j].lectureSections[0].labSections[0].end_time))
+                                            {
+                                                //document.write("Tutorial - Lab Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(iterated == potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections.length)
+                                    {
+                                        //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                        removeCourse = true;
+                                        break;
+                                    }
+                                    if(conflict == true)
+                                    {
+                                        //document.write("CHANGE SECTION <br>");
+                                        restart = true;
+                                        conflict = false;
+                                        iterated++;
+                                        potentialCourseSections[k].lectureSections[0].tutorialSections[0] = potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections[(lowestConflictTutorialIndex + 1) % potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].tutorialSections.length]
+                                        break;
+                                    }
+                                    if(conflict == false)
+                                    {
+                                        //document.write("NO Tutorial - Lab Conflict <br>");
+                                        break;
+                                    }
+
+                                }
+                                if(removeCourse == true)
+                                {
+                                    potentialCourseSections.pop();
+                                    restart = false;
+                                    removed++;
+                                    iterated = 0;
+                                    break;
+                                }
+                                if(restart == true)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////////////////
+                        
+                        //document.write("CHECK 7 <br>");
+
+                        if(potentialCourseSections[k].lectureSections[0].labSections.length > 0)
+                        {
+                            //document.write(iterated + "<br>");
+                            while(true)
+                            {
+                                for(z = 0; z < 7; z++)
+                                {
+                                    if((potentialCourseSections[j].lectureSections[0].days[z] == potentialCourseSections[k].lectureSections[0].labSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].days[z] != "-"))
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].end_time >= potentialCourseSections[k].lectureSections[0].labSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].end_time <= potentialCourseSections[k].lectureSections[0].labSections[0].end_time))
+                                        {
+                                            //document.write("Lab - Lecture Conflict <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                        if((potentialCourseSections[k].lectureSections[0].labSections[0].end_time >= potentialCourseSections[j].lectureSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].labSections[0].end_time <= potentialCourseSections[j].lectureSections[0].end_time))
+                                        {
+                                            //document.write("Lab - Lecture <br>");
+                                            conflict = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(iterated == potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections.length)
+                                {
+                                    //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                    removeCourse = true;
+                                    break;
+                                }
+                                if(conflict == true)
+                                {
+                                    //document.write("CHANGE SECTION <br>");
+                                    restart = true;
+                                    conflict = false;
+                                    iterated++;
+                                    potentialCourseSections[k].lectureSections[0].labSections[0] = potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections[(lowestConflictLabIndex + 1) % potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections.length]
+                                    break;
+                                }
+                                if(conflict == false)
+                                {
+                                    //document.write("NO Lab - Lecture Conflict <br>");
+                                    break;
+                                }
+                            }
+                            if(removeCourse == true)
+                            {
+                                potentialCourseSections.pop();
+                                restart = false;
+                                removed++;
+                                iterated = 0;
+                                break;
+                            }
+                            if(restart == true)
+                            {
+                                break;
+                            }
+                        }
+
+                        //document.write("CHECK 8 <br>");
+                        
+                        if(potentialCourseSections[j].lectureSections[0].tutorialSections.length > 0)
+                        {
+                            if(potentialCourseSections[k].lectureSections[0].labSections.length > 0)
+                            {
+                                while(true)
+                                {
+                                    for(z = 0; z < 7; z++)
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].tutorialSections[0].days[z] == potentialCourseSections[k].lectureSections[0].labSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].tutorialSections[0].days[z] != "-"))
+                                        {
+                                            if((potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time >= potentialCourseSections[k].lectureSections[0].labSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time <= potentialCourseSections[k].lectureSections[0].labSections[0].end_time))
+                                            {
+                                                //document.write("Lab - Tutorial Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                            if((potentialCourseSections[k].lectureSections[0].labSections[0].end_time >= potentialCourseSections[j].lectureSections[0].tutorialSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].labSections[0].end_time <= potentialCourseSections[j].lectureSections[0].tutorialSections[0].end_time))
+                                            {
+                                                //document.write("Lab - Tutorial Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(iterated == potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections.length)
+                                    {
+                                        //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                        removeCourse = true;
+                                        break;
+                                    }
+                                    if(conflict == true)
+                                    {
+                                        //document.write("CHANGE SECTION <br>");
+                                        restart = true;
+                                        conflict = false;
+                                        iterated++;
+                                        potentialCourseSections[k].lectureSections[0].labSections[0] = potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections[(lowestConflictLabIndex + 1) % potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections.length]
+                                        break;
+                                    }
+                                    if(conflict == false)
+                                    {
+                                        //document.write("NO Lab - Tutorial Conflict <br>");
+                                        break;
+                                    }
+                                }
+                                if(removeCourse == true)
+                                {
+                                    potentialCourseSections.pop();
+                                    restart = false;
+                                    removed++;
+                                    iterated = 0;
+                                    break;
+                                }
+                                if(restart == true)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+
+                        //document.write("CHECK 9 <br>");
+                        if(potentialCourseSections[j].lectureSections[0].labSections.length > 0)
+                        {
+                            if(potentialCourseSections[k].lectureSections[0].labSections.length > 0)
+                            {
+                                while(true)
+                                {
+                                    for(z = 0; z < 7; z++)
+                                    {
+                                        if((potentialCourseSections[j].lectureSections[0].labSections[0].days[z] == potentialCourseSections[k].lectureSections[0].labSections[0].days[z]) && (potentialCourseSections[j].lectureSections[0].labSections[0].days[z] != "-"))
+                                        {
+                                            if((potentialCourseSections[j].lectureSections[0].labSections[0].end_time >= potentialCourseSections[k].lectureSections[0].labSections[0].start_time) && (potentialCourseSections[j].lectureSections[0].labSections[0].end_time <= potentialCourseSections[k].lectureSections[0].labSections[0].end_time))
+                                            {
+                                                //document.write("Lab - Lab Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                            if((potentialCourseSections[k].lectureSections[0].labSections[0].end_time >= potentialCourseSections[j].lectureSections[0].labSections[0].start_time) && (potentialCourseSections[k].lectureSections[0].labSections[0].end_time <= potentialCourseSections[j].lectureSections[0].labSections[0].end_time))
+                                            {
+                                                //document.write("Lab - Lab Conflict <br>");
+                                                conflict = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(iterated == potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections.length)
+                                    {
+                                        //document.write("REMOVED " + potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + "<br>");
+                                        removeCourse = true;
+                                        break;
+                                    }
+                                    if(conflict == true)
+                                    {
+                                        //document.write("CHANGE SECTION <br>");
+                                        restart = true;
+                                        conflict = false;
+                                        iterated++;
+                                        potentialCourseSections[k].lectureSections[0].labSections[0] = potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections[(lowestConflictLabIndex + 1) % potentialCourses[k + removed].lectureSections[(lowestConflictLectureIndex + iterated) % potentialCourses[k + removed].lectureSections.length].labSections.length]
+                                        break;
+                                    }
+                                    if(conflict == false)
+                                    {
+                                        //document.write("NO Lab - Lab Conflict <br>");
+                                        break;
+                                    }
+                                }
+                                if(removeCourse == true)
+                                {
+                                    potentialCourseSections.pop();
+                                    restart = false;
+                                    removed++;
+                                    iterated = 0;
+                                    break;
+                                }
+                                if(restart == true)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            k = potentialCourseSections.length - 1;
+            //document.write("<br>");
+
+            if(removeCourse == false)
+            {
+                //document.write(potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + " Lecture:");
+                //document.write(potentialCourseSections[k].lectureSections[0].section_code + " Tutorial:");
+
+                if(potentialCourseSections[k].lectureSections[0].tutorialSections.length > 0)
+                {
+
+                    //document.write(potentialCourseSections[k].lectureSections[0].tutorialSections[0].section_code);
+                }
+                if(potentialCourseSections[k].lectureSections[0].labSections.length > 0)
+                {
+                    //document.write(" Lab:" + potentialCourseSections[k].lectureSections[0].labSections[0].section_code);
+                }
+                //document.write("<br>");
+            }
+            //document.write("<br>");
+        }
+    }
+    //document.write("<br>");
+}
+
+//Takes as parameters the current semester , the number of credits, the type of semester,
+//a flag for whether summer was chosen as a preference, the list of online courses, an empty semester schedule list,
+//the list of incomplete courses, the list of complete courses, the list of potential courses,
+//the list of low priority courses, the list of potential course sections, and the list of conflict counters
+//and changes the semester to the next one, adds and removes courses accordingly from the semester list,
+//incomplete list and complete list, whilst reseting all the other lists in preparation for the next iteration
+function prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections)
+{
+    var i;
+    var j;
+    var semesterArray = [];
+    
+    while(true)
+    {
+        if(term == "fall")
+        {
+            term = "winter";
+            break;
+        }
+        if(summer == true)
+        {   
+            if(term == "winter")
+            {
+                term = "summer";  
+                break;
+            }
+            if(term == "summer")
+            {
+                term = "fall";  
+                break;
+            }
+        }
+        if(summer == false)
+        {
+            if(term == "winter")
+            {
+                term = "fall";  
+                break;
+            }
+        }
+    }
+    
+    for(i = 0; i < potentialCourseSections.length; i++)
+    {
+        //semesters.push(JSON.parse(JSON.stringify(potentialCourseSections[i])));
+        semesterArray.push(JSON.parse(JSON.stringify(potentialCourseSections[i])));
+        completeCourses.push(JSON.parse(JSON.stringify(potentialCourseSections[i].course_program.concat(potentialCourseSections[i].course_number))));
+        
+        for(j = 0; j < incompleteCourses.length; j++)
+        {
+            if(potentialCourseSections[i].course_program.concat(potentialCourseSections[i].course_number) == incompleteCourses[j].course_program.concat(incompleteCourses[j].course_number))
+            {
+                incompleteCourses.splice(j, 1);
+                break;
+            }
+        }
+    }
+    
+    for(i = 0; i < onlineCourses.length; i++)
+    {
+        semesterArray.push(JSON.parse(JSON.stringify(onlineCourses[i])));
+        completeCourses.push(JSON.parse(JSON.stringify(onlineCourses[i].course_program.concat(onlineCourses[i].course_number))));
+        for(j = 0; j < incompleteCourses.length; j++)
+        {
+            if(onlineCourses[i].course_program.concat(onlineCourses[i].course_number) == incompleteCourses[j].course_program.concat(incompleteCourses[j].course_number))
+            {
+                incompleteCourses.splice(j, 1);
+                break;
+            }
+        }
+    }
+    
+    semesters[semesterCounter] = semesterArray;
+
+    //document.write("Courses taken this semester | ");
+    for(i = 0; i < semesters[semesterCounter].length; i++)
+    {
+        //document.write(semesters[semesterCounter][i].course_program.concat(semesters[semesterCounter][i].course_number) + " ");
+    }
+    //document.write("<br>");
+    
+    //document.write("Courses completed so far | ");
+    for(i = 0; i < completeCourses.length; i++)
+    {
+        //document.write(completeCourses[i] + " ");
+    }
+    //document.write("<br>");
+    
+    //document.write("Remaining courses required | ");
+    for(i = 0; i < incompleteCourses.length; i++)
+    {
+        //document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
+    }
+    //document.write("<br>");
+    
+    //document.write("Accumulated Credits | ");
+    //document.write(credits);
+    //document.write("<br>");
+    //document.write("<br>");
+    
+    while(onlineCourses.length > 0)
+    {
+        onlineCourses.pop();
+    }
+    while(potentialCourses.length > 0)
+    {
+        potentialCourses.pop();
+    }
+    while(lowPriorityCourses.length > 0)
+    {
+        lowPriorityCourses.pop();
+    }
+    while(potentialCourseSections.length > 0)
+    {
+        potentialCourseSections.pop();
+    }
+    while(conflictCounterForSections.length > 0)
+    {
+        conflictCounterForSections.pop();
+    }
+    return term;
+}
+
+exports.generator = function(term, summer_opt, incompleteCourses, completeCourses, callback)
+{
+    var summer = (summer_opt == 'yes') ? true : false;
+	var coursesPerSemester = 5;
+	var semesters = [];
+	var onlineCourses = [];
+	var potentialCourses = [];
+	var lowPriorityCourses = [];
+	var potentialCourseSections = [];
+	var conflictCounterForSections = [];
+    var semesterCounter = 0;
+
+    console.log(summer);
+
+	while(incompleteCourses.length > 0)
+	{
+		addToPotentialList(term, incompleteCourses, potentialCourses);
+
+		remove400LevelCourses(potentialCourses, incompleteCourses);
+
+		removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
+
+		sortPotentialList(potentialCourses, lowPriorityCourses);
+
+		selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+
+		conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
+
+		countTimeConflicts(term, potentialCourses, conflictCounterForSections);
+
+		selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
+
+		term = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
+
+        semesterCounter++;
+	}
+
+	if (semester)
+	{
+		callback(null, semester);
+	}
+	else
+	{
+		callback('sequence-generation-failed');
+	}
+}

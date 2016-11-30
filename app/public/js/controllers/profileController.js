@@ -8,7 +8,7 @@ $(document).ready(function()
 			data: {logout : true},
 			success: function(data)
 			{
-				alert('Successfully logged out. Redirecting   to login page.');
+				alert('Successfully logged out. Redirecting to login page.');
 				window.location.href = '/';
 			},
 			error: function(jqXHR)

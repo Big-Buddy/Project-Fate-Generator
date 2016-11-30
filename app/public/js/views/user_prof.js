@@ -23,12 +23,19 @@ $(document).ready(function()
 		{
 			if (status == 'success')
 			{
-				//refer to /sequence
+				window.location.href = '/sequence';
 			}
 		},
 		error : function(err)
 		{
-			//sequence generation errors
+			if (err.responseText == 'sequence-generation-failed')
+			{
+				alert('Sequence generation has failed because of reasons.');
+			}
+			else
+			{
+				alert('Whoops.');
+			}
 		}
 	});
 });

@@ -2,6 +2,7 @@ var AM = require('./modules/account-manager');
 var PM = require('./modules/profile-manager');
 var SG = require('./modules/sequence-generator');
 var bodyParser = require('body-parser');
+
 module.exports = function(app)
 {
 	app.get('/', function (req, res)
@@ -59,22 +60,27 @@ module.exports = function(app)
 
 	app.post('/user_prof', function(req, res)
 	{
-		console.log(req.session.user);
-		AM.saveUserPreferences(req.session.user, {
+		/*AM.saveUserPreferences(req.session.user, {
 			starting_semester : req.body['starting_semester'],
 			summer_option : req.body['summer_opt'],
 			electives : req.body["electives"],
 			completed : req.body["completed"]
+		});*/
+		
+		SG.generator(req.body['starting_semester'], req.body['summer_opt'], SG.parseToJson(req.body["electives"], req.body["completed"]), SG.exportCompletedCourseIDs(req.body["completed"]), function(err, o)
+		{
+			if (!o)
+			{
+				res.status(400).send(err);
+			}
+			else
+			{
+				console.log('You made it!!!');
+				console.log(o);
+				res.status(200).send(o);
+			}
 		});
-		//SG.parseToJson(req.body["electives"],req.body["completed"]);
-		//console.log("in user prof post");
-		//console.log(SG.parseToJson(req.body["electives"],req.body["completed"]));
-		//console.log("electives: "+req.body["electives"]);
-		//console.log(req.body["chosenGeneralElectives"]);
-		//console.log(req.body["chosenProgramElectives"]);
-		//console.log("completed: "+req.body["completed"]);
 
-		//TO IMPLEMENT: save User preferences & sequence generate
 		res.status(200).send('Success');
 	});
 

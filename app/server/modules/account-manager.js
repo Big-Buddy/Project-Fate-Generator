@@ -226,48 +226,6 @@ exports.saveUserPreferences = function(user, dataToSave)
 	}
 }
 
-exports.loadUserPreferences = function(user)
-{
-	var holdData;
-	var userPreferences = [];
-
-	accounts.find(function(userCredentials) 
-	{
-		if (userCredentials.user_name === user.user_name)
-		{
-			holdData = userCredentials;
-		}
-	});
-
-	if (holdData)
-	{
-		pool.connect(function(err, client)
-		{
-			if (err) 
-			{
-				return console.error('error fetching client from pool', err);
-			}
-			else
-			{
-				client.query('SELECT starting_semester, summer_option, electives, completed FROM public.users WHERE user_id = \'' + holdData.user_id + ';', function(err, res)
-				{
-					if (err)
-					{
-						console.log('Failed to load user preferences from database.');
-					}
-					else
-					{
-						console.log('User preferences successfully fetched.');
-						userPreferences = res.rows;
-					}
-				});
-			} 
-		});
-	}
-
-	return userPreferences;
-}
-
 //Update Accounts list after new account creation
 var updateAccounts = function(pool)
 {
