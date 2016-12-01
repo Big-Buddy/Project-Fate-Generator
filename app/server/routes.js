@@ -68,7 +68,7 @@ module.exports = function(app)
 		});*/
 		var semesters = SG.generator(req.body['starting_semester'],req.body['summer_opt'],
 			SG.parseToJson(req.body["electives"], req.body["completed"]),SG.exportCompletedCourseIDs(req.body["completed"]));
-		console.log(SG.sequencer(semesters));
+		//console.log(semesters);
 		console.log("done!");
 	});
 

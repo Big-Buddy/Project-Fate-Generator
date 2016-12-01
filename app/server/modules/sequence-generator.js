@@ -318,7 +318,6 @@ var removeIncompletePrerequisiteCourses = function(potentialCourses, completeCou
         }
         completedPrerequisites = 0;
     }
-
     return potentialCourses;
 }
 
@@ -889,7 +888,7 @@ var selectSections = function(coursesPerSemester, potentialCourses, conflictCoun
     var k;
     var z;
     var restore;
-    var lowestConflicts = 100
+    var lowestConflicts = 100;
     var lowestConflictLectureIndex = 0;
     var lowestConflictTutorialIndex = 0;
     var lowestConflictLabIndex = 0;
@@ -1565,7 +1564,7 @@ var selectSections = function(coursesPerSemester, potentialCourses, conflictCoun
             k = potentialCourseSections.length - 1;
             //document.write("<br>");
 
-            if(removeCourse == false)
+            /*if(removeCourse == false)
             {
                 //document.write(potentialCourseSections[k].course_program.concat(potentialCourseSections[k].course_number) + " Lecture:");
                 //document.write(potentialCourseSections[k].lectureSections[0].section_code + " Tutorial:");
@@ -1580,7 +1579,7 @@ var selectSections = function(coursesPerSemester, potentialCourses, conflictCoun
                     //document.write(" Lab:" + potentialCourseSections[k].lectureSections[0].labSections[0].section_code);
                 }
                 //document.write("<br>");
-            }
+            }*/
             //document.write("<br>");
         }
     }
@@ -1602,7 +1601,38 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     
     while(true)
     {
-        if(term == "Fall")
+        if (summer == true)
+        {
+            if (term == 'Fall')
+            {
+                term = 'Winter';
+                break;
+            }
+            else if (term == 'Winter')
+            {
+                term = 'Summer';
+                break;
+            }
+            else if (term == 'Summer')
+            {
+                term = 'Fall';
+                break;
+            }
+        }
+        else
+        {
+            if (term == 'Fall')
+            {
+                term = 'Winter';
+                break;
+            }
+            else if (term == 'Winter')
+            {
+                term = 'Fall';
+                break;
+            }
+        }
+        /*if(term == "Fall")
         {
             term = "Winter";
             break;
@@ -1627,14 +1657,14 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
                 term = "Fall";  
                 break;
             }
-        }
+        }*/
     }
     
     for(i = 0; i < potentialCourseSections.length; i++)
     {
         //semesters.push(JSON.parse(JSON.stringify(potentialCourseSections[i])));
         semesterArray.push(JSON.parse(JSON.stringify(potentialCourseSections[i])));
-        completeCourses.push(JSON.parse(JSON.stringify(potentialCourseSections[i].course_program.concat(potentialCourseSections[i].course_number))));
+        completeCourses.push(potentialCourseSections[i].id);
         
         for(j = 0; j < incompleteCourses.length; j++)
         {
@@ -1648,7 +1678,7 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     for(i = 0; i < onlineCourses.length; i++)
     {
         semesterArray.push(JSON.parse(JSON.stringify(onlineCourses[i])));
-        completeCourses.push(JSON.parse(JSON.stringify(onlineCourses[i].course_program.concat(onlineCourses[i].course_number))));
+        completeCourses.push(onlineCourses[i].id);
         for(j = 0; j < incompleteCourses.length; j++)
         {
             if(onlineCourses[i].course_program.concat(onlineCourses[i].course_number) == incompleteCourses[j].course_program.concat(incompleteCourses[j].course_number))
@@ -1721,136 +1751,70 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     return holder;
 }
 
-exports.sequencer = function(semesters)
+var sequencer = function(semesters, startingSemester, summer)
 {
     var i;
     var j;
     var sequence = [];
     var courses = [];
     
-    for(i = 0; i < semesters.length; i++)
+    for (semester in semesters)
     {
-        sequence.push({"semesterCounter": (i+1)})
-       
-        if(semesters[i].length > 0)
-        {
-            sequence.push({"semester": semesters[i][0].lectureSections[0].semester})
-        }
-        else if((i - 1) > - 1)
-        {
-            if(semesters[i - 1].length > 0)
-            {
-                if(semesters[i - 1][0].lectureSections[0].semester.toLowerCase() == "fall")
-                {
-                    sequence.push({"semester": "winter"})
-                }
-                if(semesters[i - 1][0].lectureSections[0].semester.toLowerCase() == "winter")
-                {
-                    sequence.push({"semester": "fall"})
-                }
-            }
-        }
-
-        for(j = 0; j < semesters[i].length; j++)
-        {      
-            courses.push({
-                            "course_program": semesters[i][j].course_program,
-                            "course_number": semesters[i][j].course_number,
-                            "course_name": semesters[i][j].course_name,
-
-                            "course_lecture_section": semesters[i][j].lectureSections[0].section_code,
-                            "course_lecture_section_days": semesters[i][j].lectureSections[0].days,
-                            "course_lecture_section_start_time": semesters[i][j].lectureSections[0].start_time,
-                            "course_lecture_section_end_time": semesters[i][j].lectureSections[0].end_time
-                        })
-            
-            if(semesters[i][j].lectureSections[0].tutorialSections.length > 0)
-            {
-                courses.push({
-                                "course_tutorial_section": semesters[i][j].lectureSections[0].tutorialSections[0].section_code,
-                                "course_tutorial_section_days": semesters[i][j].lectureSections[0].tutorialSections[0].days,
-                                "course_tutorial_section_start_time": semesters[i][j].lectureSections[0].tutorialSections[0].start_time,
-                                "course_tutorial_section_end_time": semesters[i][j].lectureSections[0].tutorialSections[0].end_time,
-
-                               
-                            })
-            }
-
-            if(semesters[i][j].lectureSections[0].labSections.length > 0)
-            {
-                courses.push({
-                                "course_lab_section": semesters[i][j].lectureSections[0].labSections[0].section_code,
-                                "course_lab_section_days": semesters[i][j].lectureSections[0].labSections[0].days,
-                                "course_lab_section_start_time": semesters[i][j].lectureSections[0].labSections[0].start_time,
-                                "course_lab_section_end_time": semesters[i][j].lectureSections[0].labSections[0].end_time
-                            })
-            }            
-        }
         
-        sequence.push({"courses": JSON.parse(JSON.stringify(courses))})
-        
-        for(j = 0; j < courses.length; j++)
-        {
-            courses.pop();
-            j--;
-        }
     }
     
-    //document.write(JSON.stringify(sequence));
-    //document.write("<br>");
     return sequence;
 }
 
 
-exports.generator= function(term,summerOption,incompleteCourses, completeCourses){
-
-// var term; //STARTING SEMESTER
-var summer=(summerOption=='yes')?true:false; //SUMMER OPTION (req.body['summer_opt'] == 'yes') ? true : false;
-// var incompleteCourses = incompleteCourses; // INCOMPLETE COURSE LIST SG.parseToJson(req.body["electives"], req.body["completed"]);
-// var completeCourses= completeCoursesIDs; // COMPLETE COURSE LIST SG.exportCompletedCourseIDs(req.body["completed"]);
-var coursesPerSemester = 5;
-var semesters = [];
-var onlineCourses = [];
-var potentialCourses = [];
-var lowPriorityCourses = [];
-var potentialCourseSections = [];
-var conflictCounterForSections = [];
-var semesterCounter = 0;
-
-while(incompleteCourses.length > 0)
+exports.generator = function(term,summerOption,incompleteCourses, completeCourses)
 {
-    potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
 
-	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
-	 
-	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
+    var startingSemester = term;
+    var summer=(summerOption=='yes')?true:false;
+    var coursesPerSemester = 5;
+    var semesters = [];
+    var onlineCourses = [];
+    var potentialCourses = [];
+    var lowPriorityCourses = [];
+    var potentialCourseSections = [];
+    var conflictCounterForSections = [];
+    var semesterCounter = 0;
 
-	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
-    lowPriorityCourses = holder1[0];
-    potentialCourses = holder1[1];
-    onlineCourses = holder1[2];
+    while(incompleteCourses.length > 0)
+    {
+        potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
 
-	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
+        potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
+         
+        potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
 
-	conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
+        var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+        lowPriorityCourses = holder1[0];
+        potentialCourses = holder1[1];
+        onlineCourses = holder1[2];
 
-	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
+        conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
 
-	var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
+        conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
 
-    term = holder2[0];
-    completeCourses = holder2[1];
-    incompleteCourses = holder2[2];
-    semesters = holder2[3];
-    onlineCourses = holder2[4];
-    lowPriorityCourses = holder2[5];
-    potentialCourses = holder2[6];
-    potentialCourseSections = holder2[7];
-    conflictCounterForSections = holder2[8];
+        //potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
+        //console.log(potentialCourseSections.lectureSections);
 
-    semesterCounter++;
+        var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
 
-    console.log('exiting loop');
-}
-return semesters;
+        term = holder2[0];
+        completeCourses = holder2[1];
+        incompleteCourses = holder2[2];
+        semesters = holder2[3];
+        onlineCourses = holder2[4];
+        lowPriorityCourses = holder2[5];
+        potentialCourses = holder2[6];
+        potentialCourseSections = holder2[7];
+        conflictCounterForSections = holder2[8];
+
+        semesterCounter++;
+    }
+
+    return sequencer(semesters, startingSemester, summer);
 }
