@@ -1,7 +1,6 @@
 var AM = require('./modules/account-manager');
 var PM = require('./modules/profile-manager');
 var SG = require('./modules/sequence-generator');
-var CD = require('./modules/code-dumpster');
 var bodyParser = require('body-parser');
 
 module.exports = function(app)
@@ -70,33 +69,34 @@ module.exports = function(app)
 		
 		
 
-    	while(incompleteCourses.length > 0)
-		{
-			console.log(incompleteCourses.length);
-		    console.log('entering loop');
-		    console.log(potentialCourses.length);
-		    //console.log('addToPotentialList');
-			SG.addToPotentialList(term, incompleteCourses, potentialCourses);
-		    //console.log('remove400LevelCourses');
-			SG.remove400LevelCourses(potentialCourses, incompleteCourses);
-		    //console.log('removeIncompletePrerequisiteCourses');
-			SG.removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
-		    //console.log('sortPotentialList');
-			SG.sortPotentialList(potentialCourses, lowPriorityCourses);
-		    //console.log('selectCoursesForSemester');
-			SG.selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
-		    //console.log('conflictCounterForSections');
-			conflictCounterForSections = SG.initializeConflictCounterForSections(term, potentialCourses);
-		    //console.log('countTimeConflicts');
-			SG.countTimeConflicts(term, potentialCourses, conflictCounterForSections);
-		    //console.log('selectSections');
-			SG.selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
-		    //console.log('prepNextIteration');
-			term = SG.prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
-		    semesterCounter++;
-		    console.log('exiting loop');
-		}
-
+  //   	while(incompleteCourses.length > 0)
+		// {
+		// 	console.log(incompleteCourses.length);
+		//     console.log('entering loop');
+		//     console.log(potentialCourses.length);
+		//     //console.log('addToPotentialList');
+		// 	SG.addToPotentialList(term, incompleteCourses, potentialCourses);
+		//     //console.log('remove400LevelCourses');
+		// 	SG.remove400LevelCourses(potentialCourses, incompleteCourses);
+		//     //console.log('removeIncompletePrerequisiteCourses');
+		// 	SG.removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
+		//     //console.log('sortPotentialList');
+		// 	SG.sortPotentialList(potentialCourses, lowPriorityCourses);
+		//     //console.log('selectCoursesForSemester');
+		// 	SG.selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+		//     //console.log('conflictCounterForSections');
+		// 	conflictCounterForSections = SG.initializeConflictCounterForSections(term, potentialCourses);
+		//     //console.log('countTimeConflicts');
+		// 	SG.countTimeConflicts(term, potentialCourses, conflictCounterForSections);
+		//     //console.log('selectSections');
+		// 	SG.selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
+		//     //console.log('prepNextIteration');
+		// 	term = SG.prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
+		//     semesterCounter++;
+		//     console.log('exiting loop');
+		// }
+		var semesters = SG.generator(req.body['starting_semester'],req.body['summer_opt'],
+			SG.parseToJson(req.body["electives"], req.body["completed"]),SG.exportCompletedCourseIDs(req.body["completed"]));
 		console.log(SG.sequencer(semesters));
 	});
 
