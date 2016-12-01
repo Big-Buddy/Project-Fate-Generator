@@ -297,6 +297,7 @@ var removeIncompletePrerequisiteCourses = function(potentialCourses, completeCou
     var j;
     var k;
     var completedPrerequisites = 0;
+    var coursesToRemove = [];
     
     for(i = 0; i < potentialCourses.length; i++)
     {
@@ -309,14 +310,15 @@ var removeIncompletePrerequisiteCourses = function(potentialCourses, completeCou
                     completedPrerequisites++;
                 }
             }
-            if(completedPrerequisites != potentialCourses[i].prerequisites.length)
-            {
-                potentialCourses.splice(i, 1);
-                if(i!=0)
-                	i--;
-            }
         }
+        if(completedPrerequisites != potentialCourses[i].prerequisites.length)
+        {
+            potentialCourses.splice(i, 1);
+            i--;
+        }
+        completedPrerequisites = 0;
     }
+
     return potentialCourses;
 }
 
@@ -1823,13 +1825,10 @@ while(incompleteCourses.length > 0)
 	 
 	//potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
 
-
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
-	
     lowPriorityCourses = holder1[0];
     potentialCourses = holder1[1];
     onlineCourses = holder1[2];
-
 
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
 
@@ -1850,6 +1849,9 @@ while(incompleteCourses.length > 0)
     conflictCounterForSections = holder2[8];
 
     semesterCounter++;
+
+    console.log('exiting loop');
+    console.log(completeCourses.length);
 }
 return semesters;
 }
