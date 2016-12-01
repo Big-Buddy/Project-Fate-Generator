@@ -1705,7 +1705,18 @@ exports.prepNextIteration = function(semesterCounter, term, summer, onlineCourse
     {
         conflictCounterForSections.pop();
     }
-    return term;
+    
+    var holder = [];
+    holder.push(term);
+    holder.push(completeCourses);
+    holder.push(incompleteCourses);
+    holder.push(semesters);
+    holder.push(onlineCourses);
+    holder.push(lowPriorityCourses);
+    holder.push(potentialCourses);
+    holder.push(potentialCourseSections);
+    holder.push(conflictCounterForSections);
+    return holder;
 }
 
 function sequencer(semesters)
@@ -1813,10 +1824,12 @@ while(incompleteCourses.length > 0)
     //console.log('sortPotentialList');
 	sortPotentialList(potentialCourses, lowPriorityCourses);
     //console.log('selectCoursesForSemester');
-	var holder = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+
+	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
     lowPriorityCourses = holder[0];
     potentialCourses = holder[1];
     onlineCourses = holder[2];
+
     //console.log('conflictCounterForSections');
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
     //console.log('countTimeConflicts');
@@ -1824,7 +1837,19 @@ while(incompleteCourses.length > 0)
     //console.log('selectSections');
 	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
     //console.log('prepNextIteration');
-	term = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
+
+	var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
+    
+    term = holder2[0];
+    completeCourses = holder2[1];
+    incompleteCourses = holder2[2];
+    semesters = holder2[3];
+    onlineCourses = holder2[4];
+    lowPriorityCourses = holder2[5];
+    potentialCourses = holder2[6];
+    potentialCourseSections = holder2[7];
+    conflictCounterForSections = holder2[8];
+
     semesterCounter++;
     console.log('exiting loop');
 }
