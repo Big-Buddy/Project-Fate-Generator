@@ -68,36 +68,6 @@ module.exports = function(app)
 			completed : req.body["completed"]
 		});*/
 		
-		
-
-    	while(incompleteCourses.length > 0)
-		{
-			console.log(incompleteCourses.length);
-		    console.log('entering loop');
-		    console.log(potentialCourses.length);
-		    //console.log('addToPotentialList');
-			SG.addToPotentialList(term, incompleteCourses, potentialCourses);
-		    //console.log('remove400LevelCourses');
-			SG.remove400LevelCourses(potentialCourses, incompleteCourses);
-		    //console.log('removeIncompletePrerequisiteCourses');
-			SG.removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
-		    //console.log('sortPotentialList');
-			SG.sortPotentialList(potentialCourses, lowPriorityCourses);
-		    //console.log('selectCoursesForSemester');
-			SG.selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
-		    //console.log('conflictCounterForSections');
-			conflictCounterForSections = SG.initializeConflictCounterForSections(term, potentialCourses);
-		    //console.log('countTimeConflicts');
-			SG.countTimeConflicts(term, potentialCourses, conflictCounterForSections);
-		    //console.log('selectSections');
-			SG.selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
-		    //console.log('prepNextIteration');
-			term = SG.prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
-		    semesterCounter++;
-		    console.log('exiting loop');
-		}
-
-		console.log(SG.sequencer(semesters));
 	});
 
 	app.get('/change', function(req, res)
