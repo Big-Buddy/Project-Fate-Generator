@@ -72,6 +72,19 @@ module.exports = function(app)
 		console.log("done!");
 	});
 
+	app.get('/sequence', function(req,res)
+	{
+		if (req.session.user == null)
+		{
+			// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	
+		else
+		{	
+			res.render('user_prof'); //data goes in render parameters like in /user_prof GET
+		} 
+	})
+
 	app.get('/change', function(req, res)
 	{
 		if (req.session.user == null)

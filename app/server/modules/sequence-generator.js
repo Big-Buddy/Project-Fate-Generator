@@ -1823,7 +1823,7 @@ while(incompleteCourses.length > 0)
 
 	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
 	 
-	//potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
+	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
 
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
     lowPriorityCourses = holder1[0];
@@ -1851,7 +1851,6 @@ while(incompleteCourses.length > 0)
     semesterCounter++;
 
     console.log('exiting loop');
-    console.log(completeCourses.length);
 }
 return semesters;
 }
