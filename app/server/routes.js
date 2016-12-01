@@ -71,6 +71,7 @@ module.exports = function(app)
 		if (sequence)
 		{
 			console.log(sequence);
+			app.set('data',sequence);
 			res.status(200).send(sequence);
 		}
 		else
@@ -88,7 +89,7 @@ module.exports = function(app)
 		}	
 		else
 		{	
-			res.render('sequence'); //data goes in render parameters like in /user_prof GET
+			res.render('sequence',{sequenceData: app.get('data')}); //data goes in render parameters like in /user_prof GET
 		} 
 	})
 
