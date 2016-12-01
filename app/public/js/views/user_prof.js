@@ -28,14 +28,7 @@ $(document).ready(function()
 		},
 		error : function(err)
 		{
-			if (err.responseText == 'sequence-generation-failed')
-			{
-				alert('Sequence generation has failed because of reasons.');
-			}
-			else
-			{
-				alert('done.');
-			}
+			alert(err);
 		}
 	});
 });

@@ -66,10 +66,16 @@ module.exports = function(app)
 			electives : req.body["electives"],
 			completed : req.body["completed"]
 		});*/
-		var semesters = SG.generator(req.body['starting_semester'],req.body['summer_opt'],
-			SG.parseToJson(req.body["electives"], req.body["completed"]),SG.exportCompletedCourseIDs(req.body["completed"]));
-		//console.log(semesters);
-		console.log("done!");
+		var sequence = SG.generator(req.body['starting_semester'], req.body['summer_opt'], SG.parseToJson(req.body["electives"], req.body["completed"]), SG.exportCompletedCourseIDs(req.body["completed"]));
+
+		if (sequence)
+		{
+			res.status(200).send(sequence);
+		}
+		else
+		{
+			res.status(400).send('Failed to generate sequence.');
+		}
 	});
 
 	app.get('/sequence', function(req,res)
@@ -81,7 +87,7 @@ module.exports = function(app)
 		}	
 		else
 		{	
-			res.render('user_prof'); //data goes in render parameters like in /user_prof GET
+			res.render('sequence'); //data goes in render parameters like in /user_prof GET
 		} 
 	})
 

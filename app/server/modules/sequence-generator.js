@@ -385,12 +385,12 @@ var selectCoursesForSemester = function(coursesPerSemester, onlineCourses, poten
         }
     }
 
-    var stuff = [];
-    stuff.push(lowPriorityCourses);
-    stuff.push(potentialCourses);
-    stuff.push(onlineCourses);
+    var holder = [];
+    holder.push(lowPriorityCourses);
+    holder.push(potentialCourses);
+    holder.push(onlineCourses);
 
-    return stuff;
+    return holder;
 
     /*
     for (i = 0; i < potentialCourses.length; i++)
@@ -1632,32 +1632,6 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
                 break;
             }
         }
-        /*if(term == "Fall")
-        {
-            term = "Winter";
-            break;
-        }
-        if(summer == true)
-        {   
-            if(term == "Winter")
-            {
-                term = "Summer";  
-                break;
-            }
-            if(term == "Summer")
-            {
-                term = "Fall";  
-                break;
-            }
-        }
-        if(summer == false)
-        {
-            if(term == "Winter")
-            {
-                term = "Fall";  
-                break;
-            }
-        }*/
     }
     
     for(i = 0; i < potentialCourseSections.length; i++)
@@ -1751,25 +1725,145 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     return holder;
 }
 
-var sequencer = function(semesters, startingSemester, summer)
+var sequencer = function(semesters, term, summer)
 {
-    var i;
-    var j;
     var sequence = [];
-    var courses = [];
+    var courseList = [];
+    var semesterLabels = [];
+
+    for (semester in semesters)
+    {
+        if (summer == true)
+        {
+            if (term == 'Fall')
+            {
+                term = 'Winter';
+                semesterLabels.push('Fall');
+            }
+            else if (term == 'Winter')
+            {
+                term = 'Summer';
+                semesterLabels.push('Winter');
+            }
+            else if (term == 'Summer')
+            {
+                term = 'Fall';
+                semesterLabels.push('Summer');
+            }
+        }
+        else
+        {
+            if (term == 'Fall')
+            {
+                term = 'Winter';
+                semesterLabels.push('Fall');
+            }
+            else if (term == 'Winter')
+            {
+                term = 'Fall';
+                semesterLabels.push('Winter');
+            }
+        }
+    }
     
     for (semester in semesters)
     {
-        
+        var number = semester;
+        var season;
+
+        if (semesters[semester].length > 0)
+        {
+            season = semesterLabels[semester];
+
+            for (course in semesters[semester])
+            {
+                courseList.push({
+                                    "course_program": semesters[semester][course].course_program,
+                                    "course_number": semesters[semester][course].course_number,
+                                    "course_name": semesters[semester][course].course_name
+                                });
+            }
+        }
+
+        var info = [{'id': number}, {'semester': season}, {'courses': courseList}];
+        sequence.push(info);
+        courseList = [];
     }
+
+    /*for(i = 0; i < semesters.length; i++)
+    {
+        sequence.push({"semesterCounter": (i+1)})
+       
+        if(semesters[i].length > 0)
+        {
+            sequence.push({"semester": semesters[i][0].lectureSections[0].semester})
+        }
+        else if((i - 1) > - 1)
+        {
+            if(semesters[i - 1].length > 0)
+            {
+                if(semesters[i - 1][0].lectureSections[0].semester.toLowerCase() == "fall")
+                {
+                    sequence.push({"semester": "winter"})
+                }
+                if(semesters[i - 1][0].lectureSections[0].semester.toLowerCase() == "winter")
+                {
+                    sequence.push({"semester": "fall"})
+                }
+            }
+        }
+
+        for(j = 0; j < semesters[i].length; j++)
+        {      
+            courses.push({
+                            "course_program": semesters[i][j].course_program,
+                            "course_number": semesters[i][j].course_number,
+                            "course_name": semesters[i][j].course_name,
+
+                            "course_lecture_section": semesters[i][j].lectureSections[0].section_code,
+                            "course_lecture_section_days": semesters[i][j].lectureSections[0].days,
+                            "course_lecture_section_start_time": semesters[i][j].lectureSections[0].start_time,
+                            "course_lecture_section_end_time": semesters[i][j].lectureSections[0].end_time
+                        })
+            
+            if(semesters[i][j].lectureSections[0].tutorialSections.length > 0)
+            {
+                courses.push({
+                                "course_tutorial_section": semesters[i][j].lectureSections[0].tutorialSections[0].section_code,
+                                "course_tutorial_section_days": semesters[i][j].lectureSections[0].tutorialSections[0].days,
+                                "course_tutorial_section_start_time": semesters[i][j].lectureSections[0].tutorialSections[0].start_time,
+                                "course_tutorial_section_end_time": semesters[i][j].lectureSections[0].tutorialSections[0].end_time,
+
+                               
+                            })
+            }
+
+            if(semesters[i][j].lectureSections[0].labSections.length > 0)
+            {
+                courses.push({
+                                "course_lab_section": semesters[i][j].lectureSections[0].labSections[0].section_code,
+                                "course_lab_section_days": semesters[i][j].lectureSections[0].labSections[0].days,
+                                "course_lab_section_start_time": semesters[i][j].lectureSections[0].labSections[0].start_time,
+                                "course_lab_section_end_time": semesters[i][j].lectureSections[0].labSections[0].end_time
+                            })
+            }            
+        }
+        
+        sequence.push({"courses": JSON.parse(JSON.stringify(courses))})
+        
+        for(j = 0; j < courses.length; j++)
+        {
+            courses.pop();
+            j--;
+        }
+    }*/
     
     return sequence;
 }
 
 
-exports.generator = function(term,summerOption,incompleteCourses, completeCourses)
+exports.generator = function(term, summerOption, incompleteCourses, completeCourses)
 {
-
     var startingSemester = term;
     var summer=(summerOption=='yes')?true:false;
     var coursesPerSemester = 5;
@@ -1798,8 +1892,7 @@ exports.generator = function(term,summerOption,incompleteCourses, completeCourse
 
         conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
 
-        //potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
-        //console.log(potentialCourseSections.lectureSections);
+        potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
 
         var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
 
