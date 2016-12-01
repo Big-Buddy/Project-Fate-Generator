@@ -1,7 +1,6 @@
 var AM = require('./modules/account-manager');
 var PM = require('./modules/profile-manager');
 var SG = require('./modules/sequence-generator');
-var CD = require('./modules/code-dumpster');
 var bodyParser = require('body-parser');
 
 module.exports = function(app)
@@ -68,6 +67,9 @@ module.exports = function(app)
 			completed : req.body["completed"]
 		});*/
 		
+		var semesters = SG.generator(req.body['starting_semester'],req.body['summer_opt'],
+			SG.parseToJson(req.body["electives"], req.body["completed"]),SG.exportCompletedCourseIDs(req.body["completed"]));
+		console.log(SG.sequencer(semesters));
 	});
 
 	app.get('/change', function(req, res)
