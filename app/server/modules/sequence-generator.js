@@ -223,16 +223,13 @@ var addToPotentialList = function(term, incompleteCourses, StubPotentialCourses)
     var i;
     var j;
     var potentialCourses=StubPotentialCourses;
-    console.log(incompleteCourses.length);
-    console.log("term"+term);
-    console.log("blbabla"+incompleteCourses[0].lectureSections[0].semester);
+
     for(i = 0; i < incompleteCourses.length; i++)
     {
         for(j = 0; j < incompleteCourses[i].lectureSections.length; j++)
         {
             if(incompleteCourses[i].lectureSections[j].semester.toLowerCase() == term.toLowerCase())
             {
-            	console.log("inside");
                 potentialCourses.push(JSON.parse(JSON.stringify(incompleteCourses[i])));
                 break;
             }
@@ -1603,29 +1600,29 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     
     while(true)
     {
-        if(term == "fall")
+        if(term == "Fall")
         {
-            term = "winter";
+            term = "Winter";
             break;
         }
         if(summer == true)
         {   
-            if(term == "winter")
+            if(term == "Winter")
             {
-                term = "summer";  
+                term = "Summer";  
                 break;
             }
-            if(term == "summer")
+            if(term == "Summer")
             {
-                term = "fall";  
+                term = "Fall";  
                 break;
             }
         }
         if(summer == false)
         {
-            if(term == "winter")
+            if(term == "Winter")
             {
-                term = "fall";  
+                term = "Fall";  
                 break;
             }
         }
@@ -1646,7 +1643,6 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
             }
         }
     }
-    
     for(i = 0; i < onlineCourses.length; i++)
     {
         semesterArray.push(JSON.parse(JSON.stringify(onlineCourses[i])));
@@ -1660,7 +1656,7 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
             }
         }
     }
-    
+
     semesters[semesterCounter] = semesterArray;
 
     /*//document.write("Courses taken this semester | ");
@@ -1822,35 +1818,28 @@ var semesterCounter = 0;
 while(incompleteCourses.length > 0)
 {
     console.log('entering loop');
-    console.log("before:"+potentialCourses.length);
-    //console.log('addToPotentialList');
+
 	potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
-	console.log("after:"+potentialCourses.length);
-    //console.log('remove400LevelCourses');
+
 	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
-	//console.log(potentialCourses.length);
-    //console.log('removeIncompletePrerequisiteCourses');
+
 	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
-	//console.log(potentialCourses.length);
-    //console.log('sortPotentialList');
-	//potentialCourses = sortPotentialList(potentialCourses, lowPriorityCourses);
-    //console.log('selectCoursesForSemester');
 
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
     lowPriorityCourses = holder1[0];
     potentialCourses = holder1[1];
     onlineCourses = holder1[2];
 
-    //console.log('conflictCounterForSections');
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
-    //console.log('countTimeConflicts');
+
 	conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
-    //console.log('selectSections');
+
 	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
-    //console.log('prepNextIteration');
 
 	var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
     
+    console.log("run #" + semesterCounter + '\n' + potentialCourses.length);
+
     term = holder2[0];
     completeCourses = holder2[1];
     incompleteCourses = holder2[2];
@@ -1866,5 +1855,3 @@ while(incompleteCourses.length > 0)
 }
 return semesters;
 }
-
-//var sequence = sequencer(semesters);
