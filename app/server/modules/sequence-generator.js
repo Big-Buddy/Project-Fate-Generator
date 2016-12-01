@@ -216,57 +216,9 @@ exports.parseToJson = function(electives, completed)
 
 //SEQUENCE GENERATOR IMPLEMENTATION
 
-//Takes as parameters the list of all courses of the program
-//and an empty incomplete courses list and populates it with thse courses
-function createIncompleteList(courses, incompleteCourses)
-{
-    var i;
-    
-    for(i = 0; i < courses.length; i++)
-    {
-       incompleteCourses.push(JSON.parse(JSON.stringify(courses[i])));
-    }
-    /*
-    for(i = 0; i < incompleteCourses.length; i++)
-    {
-        document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
-    }
-    document.write("<br>");
-    document.write("<br>");
-    */
-}
-
-//Takes as parameters the list of incomplete courses and the list of completed courses
-//and removes those that have been completed from the incomplete courses list
-function removeCompletedCourses(incompleteCourses, completeCourses)
-{
-    var i;
-    var j;
-    
-    for(i = 0; i < incompleteCourses.length; i++)
-    {
-        for(j = 0; j < completeCourses.length; j++)
-        {
-            if(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) == completeCourses[j])
-            {
-                incompleteCourses.splice(i, 1);
-                i--;
-            }
-        }
-    }
-    /*
-    for(i = 0; i < incompleteCourses.length; i++)
-    {
-        document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
-    }
-    document.write("<br>");
-    document.write("<br>");
-    */
-}
-
 //Takes as parameters the type of semester, the list of all incomplete courses and
 //an empty potential course list and populates it with courses that are offered in the same term
-exports.addToPotentialList = function(term, incompleteCourses, potentialCourses)
+var addToPotentialList = function(term, incompleteCourses, potentialCourses)
 {
     var i;
     var j;
@@ -282,6 +234,8 @@ exports.addToPotentialList = function(term, incompleteCourses, potentialCourses)
             }
         }
     }
+
+    return potentialCourses;
     /*
     for(i = 0; i < potentialCourses.length; i++)
     {
@@ -321,6 +275,8 @@ exports.remove400LevelCourses = function(potentialCourses, incompleteCourses)
             }
         }
     }
+
+    return potentialCourses;
     /*
     for(i = 0; i < potentialCourses.length; i++)
     {
@@ -439,6 +395,14 @@ exports.selectCoursesForSemester = function(coursesPerSemester, onlineCourses, p
             i--;
         }
     }
+
+    var stuff = [];
+    stuff.push(lowPriorityCourses);
+    stuff.push(potentialCourses);
+    stuff.push(onlineCourses);
+
+    return stuff;
+
     /*
     for (i = 0; i < potentialCourses.length; i++)
     {
@@ -956,7 +920,7 @@ exports.countTimeConflicts = function(term, potentialCourses, conflictCounterFor
 //empty poential course sections list and then checks for conflictions between courses
 //already in the list and tries to replace the sectons that conflict,if a replacement isnt
 //found the course is removed from the list of potential cours sections
-exports.selectSections = function(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections)
+var selectSections = function(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections)
 {
     var i;
     var j;
@@ -1659,6 +1623,7 @@ exports.selectSections = function(coursesPerSemester, potentialCourses, conflict
         }
     }
     //document.write("<br>");
+    return potentialCourseSections;
 }
 
 //Takes as parameters the current semester , the number of credits, the type of semester,
@@ -1881,27 +1846,28 @@ while(incompleteCourses.length > 0)
 {
     console.log('entering loop');
     //console.log('addToPotentialList');
-	addToPotentialList(term, incompleteCourses, potentialCourses);
+	potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
     //console.log('remove400LevelCourses');
-	remove400LevelCourses(potentialCourses, incompleteCourses);
+	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
     //console.log('removeIncompletePrerequisiteCourses');
 	removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
     //console.log('sortPotentialList');
 	sortPotentialList(potentialCourses, lowPriorityCourses);
     //console.log('selectCoursesForSemester');
-	selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+	var holder = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+    lowPriorityCourses = holder[0];
+    potentialCourses = holder[1];
+    onlineCourses = holder[2];
     //console.log('conflictCounterForSections');
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
     //console.log('countTimeConflicts');
 	countTimeConflicts(term, potentialCourses, conflictCounterForSections);
     //console.log('selectSections');
-	selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
+	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
     //console.log('prepNextIteration');
 	term = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
-
     semesterCounter++;
     console.log('exiting loop');
-
 }
 
 var sequence = sequencer(semesters);

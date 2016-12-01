@@ -68,18 +68,7 @@ module.exports = function(app)
 			completed : req.body["completed"]
 		});*/
 		
-		var term = (req.body['starting_semester']);
-    	var summer = (req.body['summer_opt'] == 'yes') ? true : false;
-    	var incompleteCourses = SG.parseToJson(req.body["electives"], req.body["completed"]);
-    	var completeCourses = SG.exportCompletedCourseIDs(req.body["completed"]);
-		var coursesPerSemester = 5;
-		var semesters = [];
-		var onlineCourses = [];
-		var potentialCourses = [];
-		var lowPriorityCourses = [];
-		var potentialCourseSections = [];
-		var conflictCounterForSections = [];
-    	var semesterCounter = 0;
+		
 
     	while(incompleteCourses.length > 0)
 		{
