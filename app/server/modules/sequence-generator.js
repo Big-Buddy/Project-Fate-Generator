@@ -1820,9 +1820,9 @@ while(incompleteCourses.length > 0)
     //console.log('remove400LevelCourses');
 	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
     //console.log('removeIncompletePrerequisiteCourses');
-	removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
+	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
     //console.log('sortPotentialList');
-	sortPotentialList(potentialCourses, lowPriorityCourses);
+	potentialCourses = sortPotentialList(potentialCourses, lowPriorityCourses);
     //console.log('selectCoursesForSemester');
 
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
@@ -1833,7 +1833,7 @@ while(incompleteCourses.length > 0)
     //console.log('conflictCounterForSections');
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
     //console.log('countTimeConflicts');
-	countTimeConflicts(term, potentialCourses, conflictCounterForSections);
+	conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
     //console.log('selectSections');
 	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
     //console.log('prepNextIteration');
