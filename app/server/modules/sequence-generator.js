@@ -132,7 +132,7 @@ var parseDBArrayToJson = function(DBArray){
 //removes an element from JSONArray, matching the CourseID passed in
 var removeJsonElementsByCourseID= function(CourseID, JSONArray){
 	for(elementIndex in JSONArray){
-		if(JSONArray[elementIndex].courseID==CourseID){
+		if(JSONArray[elementIndex].id==CourseID){
 			//console.log("elementIndex: "+elementIndex);
 			//console.log("Course ID: "+CourseID);
 			JSONArray.splice(elementIndex,1);
@@ -1771,19 +1771,17 @@ var sequencer = function(semesters, term, summer)
         var number = semester;
         var season;
 
-        if (semesters[semester].length > 0)
-        {
-            season = semesterLabels[semester];
+        season = semesterLabels[semester];
 
-            for (course in semesters[semester])
-            {
-                courseList.push({
-                                    "course_program": semesters[semester][course].course_program,
-                                    "course_number": semesters[semester][course].course_number,
-                                    "course_name": semesters[semester][course].course_name
-                                });
-            }
+        for (course in semesters[semester])
+        {
+            courseList.push({
+                                "course_program": semesters[semester][course].course_program,
+                                "course_number": semesters[semester][course].course_number,
+                                "course_name": semesters[semester][course].course_name
+                            });
         }
+    
 
         var info = [{'id': number}, {'semester': season}, {'courses': courseList}];
         sequence.push(info);
@@ -1880,10 +1878,11 @@ exports.generator = function(term, summerOption, incompleteCourses, completeCour
         potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
 
         potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
-         
+
         potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
 
         var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+
         lowPriorityCourses = holder1[0];
         potentialCourses = holder1[1];
         onlineCourses = holder1[2];

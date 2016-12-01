@@ -70,6 +70,7 @@ module.exports = function(app)
 
 		if (sequence)
 		{
+			console.log(sequence);
 			res.status(200).send(sequence);
 		}
 		else
