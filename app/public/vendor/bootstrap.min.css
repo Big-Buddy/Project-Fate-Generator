@@ -4104,6 +4104,7 @@ a.list-group-item-success.active, a.list-group-item-success.active:focus, a.list
 .list-group-item-info {
     color: #31708f;
     background-color: #d9edf7;
+    border-radius: 3px;
 }
 a.list-group-item-info, button.list-group-item-info {
     color: #31708f;
@@ -4123,6 +4124,7 @@ a.list-group-item-info.active, a.list-group-item-info.active:focus, a.list-group
 .list-group-item-warning {
     color: #8a6d3b;
     background-color: #fcf8e3;
+    border-radius:3px;
 }
 a.list-group-item-warning, button.list-group-item-warning {
     color: #8a6d3b;
@@ -4140,8 +4142,11 @@ a.list-group-item-warning.active, a.list-group-item-warning.active:focus, a.list
     border-color: #8a6d3b;
 }
 .list-group-item-danger {
+    position:relative;
     color: #a94442;
     background-color: #f2dede;
+    border-radius: 3px;
+    border-color: 2px black;
 }
 a.list-group-item-danger, button.list-group-item-danger {
     color: #a94442;

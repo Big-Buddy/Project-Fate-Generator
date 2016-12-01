@@ -22,16 +22,23 @@ html
 					div.row
 						div.col-md-12
 							h2 Behold, your sequence!
-					div.row
+					div.column
 						ul.list-group
 							each item in sequenceData
 								div.col-md-6.col-sm-12
 									ul.list-group
-										li.list-group-item
-											label=item[1].semester+" semester #"+item[0].id+":"
-												each course in item[2].courses
-													li.list-group-item(name= "listItem", id="elective")
-														label=course.course_program+course.course_number+" "+course.course_name+"\n"
+										if item[1].semester=="Winter"
+											li.list-group-item-info
+												label=item[1].semester+" semester #"+item[0].id+":"
+													each course in item[2].courses
+														li.list-group-item-danger(name= "listItem", id="elective")
+															label=course.course_program+course.course_number+" "+course.course_name+"\n"
+										else
+											li.list-group-item-warning
+												label=item[1].semester+" semester #"+item[0].id+":"
+													each course in item[2].courses
+														li.list-group-item-danger(name= "listItem", id="elective")
+															label=course.course_program+course.course_number+" "+course.course_name+"\n"
 						<!--Data goes here!-->
 						<!--Every two semester GENERATE div.clearfix.visible-md-block-->
 						<!--For each semester GENERATE div.col-md-6.col-sm-12 + ul.list-group-->
