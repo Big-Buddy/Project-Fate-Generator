@@ -216,57 +216,9 @@ exports.parseToJson = function(electives, completed)
 
 //SEQUENCE GENERATOR IMPLEMENTATION
 
-//Takes as parameters the list of all courses of the program
-//and an empty incomplete courses list and populates it with thse courses
-function createIncompleteList(courses, incompleteCourses)
-{
-    var i;
-    
-    for(i = 0; i < courses.length; i++)
-    {
-       incompleteCourses.push(JSON.parse(JSON.stringify(courses[i])));
-    }
-    /*
-    for(i = 0; i < incompleteCourses.length; i++)
-    {
-        document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
-    }
-    document.write("<br>");
-    document.write("<br>");
-    */
-}
-
-//Takes as parameters the list of incomplete courses and the list of completed courses
-//and removes those that have been completed from the incomplete courses list
-function removeCompletedCourses(incompleteCourses, completeCourses)
-{
-    var i;
-    var j;
-    
-    for(i = 0; i < incompleteCourses.length; i++)
-    {
-        for(j = 0; j < completeCourses.length; j++)
-        {
-            if(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) == completeCourses[j])
-            {
-                incompleteCourses.splice(i, 1);
-                i--;
-            }
-        }
-    }
-    /*
-    for(i = 0; i < incompleteCourses.length; i++)
-    {
-        document.write(incompleteCourses[i].course_program.concat(incompleteCourses[i].course_number) + " ");
-    }
-    document.write("<br>");
-    document.write("<br>");
-    */
-}
-
 //Takes as parameters the type of semester, the list of all incomplete courses and
 //an empty potential course list and populates it with courses that are offered in the same term
-exports.addToPotentialList = function(term, incompleteCourses, potentialCourses)
+var addToPotentialList = function(term, incompleteCourses, potentialCourses)
 {
     var i;
     var j;
@@ -296,7 +248,7 @@ exports.addToPotentialList = function(term, incompleteCourses, potentialCourses)
 //Takes as parameters the list of potential courses and 
 //the list of all incomplete courses and removes all 400 level courses 
 //from the potential course list if there are any incomplete 200 level courses
-exports.remove400LevelCourses = function(potentialCourses, incompleteCourses)
+var remove400LevelCourses = function(potentialCourses, incompleteCourses)
 {
     var i;
     var remove400 = false;
@@ -334,7 +286,7 @@ exports.remove400LevelCourses = function(potentialCourses, incompleteCourses)
 //Takes as parameters the list of potential courses and the list of completed courses
 //and removes any courses from the potential course list
 //that require prerequisites if they have not yet been completed
-exports.removeIncompletePrerequisiteCourses = function(potentialCourses, completeCourses)
+var removeIncompletePrerequisiteCourses = function(potentialCourses, completeCourses)
 {
     var i;
     var j;
@@ -359,19 +311,12 @@ exports.removeIncompletePrerequisiteCourses = function(potentialCourses, complet
             }
         }
     }
-    /*
-    for(i = 0; i < potentialCourses.length; i++)
-    {
-        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
-    }
-    document.write("<br>");
-    document.write("<br>");
-    */
+    return potentialCourses;
 }
 
 //Takes as parameters the list of potential courses and
 //an empty low priority list and uses it to sort the courses by their priority
-exports.sortPotentialList = function(potentialCourses, lowPriorityCourses)
+var sortPotentialList = function(potentialCourses, lowPriorityCourses)
 {
     var i;
     var j;
@@ -400,14 +345,7 @@ exports.sortPotentialList = function(potentialCourses, lowPriorityCourses)
         lowPriorityCourses.splice(lowPriorityCourses[i], 1);
         i--;
     }
-    /*
-    for(i = 0; i < potentialCourses.length; i++)
-    {
-        document.write(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) + " ");
-    }
-    document.write("<br>");
-    document.write("<br>");
-    */
+    return potentialCourses;
 }
 
 //Takes as parameters the users preference for courses per semester, an empty list of online courses,
@@ -415,7 +353,7 @@ exports.sortPotentialList = function(potentialCourses, lowPriorityCourses)
 //whilst removeing them from the potential course list
 //If the low priority course is an online course it is removed
 //from the potential course list and added to the online course list
-exports.selectCoursesForSemester = function(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses)
+var selectCoursesForSemester = function(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses)
 {
     var i;
     
@@ -452,7 +390,7 @@ exports.selectCoursesForSemester = function(coursesPerSemester, onlineCourses, p
 //Takes as parameters the type of semester and the potential course list
 //and creates and returns an array with counters for the conflicts
 //between sections of the potential courses with all initialized to 0
-exports.initializeConflictCounterForSections = function(term, potentialCourses)
+var initializeConflictCounterForSections = function(term, potentialCourses)
 {
     var i;
     var j;
@@ -502,27 +440,13 @@ exports.initializeConflictCounterForSections = function(term, potentialCourses)
             }
         }
     }
-    /*
-    for(i = 0; i < createConflictArray.length; i++)
-    {
-        for(j = 0; j < createConflictArray[i].length; j++)
-        {
-            for(k = 0; k < createConflictArray[i][j].length; k++)
-            {
-                document.write(createConflictArray[i][j][k] + " ");
-            }
-            document.write("<br>");
-        }
-    }
-    document.write("<br>");
-    */
     return createConflictArray;
 }
 
 //Takes as parameters the type of semester, the potential course list
 //and the list of conflicts for each section and tests for conflicts between
 //sections while increment corresponding counters if a conflict is found
-exports.countTimeConflicts = function(term, potentialCourses, conflictCounterForSections)
+var countTimeConflicts = function(term, potentialCourses, conflictCounterForSections)
 {
     var a;
     var i;
@@ -935,20 +859,7 @@ exports.countTimeConflicts = function(term, potentialCourses, conflictCounterFor
             }
         }
     }
-    /*
-    for(i = 0; i < conflictCounterForSections.length; i++)
-    {
-        for (j = 0; j < conflictCounterForSections[i].length; j++)
-        {
-            for (k = 0; k < conflictCounterForSections[i][j].length; k++)
-            {
-                document.write(conflictCounterForSections[i][j][k] + " ");
-            }
-            document.write("<br>");
-        }
-    }
-    document.write("<br>");
-    */
+    return conflictCounterForSections;
 }
 
 //Takes as parameters the potential course list, the list of conflicts for each section
@@ -956,7 +867,7 @@ exports.countTimeConflicts = function(term, potentialCourses, conflictCounterFor
 //empty poential course sections list and then checks for conflictions between courses
 //already in the list and tries to replace the sectons that conflict,if a replacement isnt
 //found the course is removed from the list of potential cours sections
-exports.selectSections = function(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections)
+var selectSections = function(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections)
 {
     var i;
     var j;
