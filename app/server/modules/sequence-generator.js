@@ -223,16 +223,12 @@ var addToPotentialList = function(term, incompleteCourses, StubPotentialCourses)
     var i;
     var j;
     var potentialCourses=StubPotentialCourses;
-    console.log(incompleteCourses.length);
-    console.log("term"+term);
-    console.log("blbabla"+incompleteCourses[0].lectureSections[0].semester);
     for(i = 0; i < incompleteCourses.length; i++)
     {
         for(j = 0; j < incompleteCourses[i].lectureSections.length; j++)
         {
             if(incompleteCourses[i].lectureSections[j].semester.toLowerCase() == term.toLowerCase())
             {
-            	console.log("inside");
                 potentialCourses.push(JSON.parse(JSON.stringify(incompleteCourses[i])));
                 break;
             }
@@ -534,7 +530,6 @@ var countTimeConflicts = function(term, potentialCourses, conflictCounterForSect
                 }
                 
                 invalidTermSections = 0;
-                
                 if(potentialCourses[j].lectureSections[termCourseSection2].tutorialSections.length > 0)
                 {
                     for(k = 0; k < potentialCourses[i].lectureSections.length; k++)
@@ -1823,34 +1818,25 @@ while(incompleteCourses.length > 0)
 {
     console.log('entering loop');
     console.log("before:"+potentialCourses.length);
-    //console.log('addToPotentialList');
 	potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
-	console.log("after:"+potentialCourses.length);
-    //console.log('remove400LevelCourses');
+	console.log("after addToPotentialList:"+potentialCourses.length);
 	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
-	//console.log(potentialCourses.length);
-    //console.log('removeIncompletePrerequisiteCourses');
+	console.log("after remove400LevelCourses:"+potentialCourses.length);
 	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
-	//console.log(potentialCourses.length);
-    //console.log('sortPotentialList');
-	//potentialCourses = sortPotentialList(potentialCourses, lowPriorityCourses);
-    //console.log('selectCoursesForSemester');
-
+	console.log("after removeIncompletePrerequisiteCourses:"+potentialCourses.length);
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
+	console.log("after selectCoursesForSemester:"+potentialCourses.length);
     lowPriorityCourses = holder1[0];
     potentialCourses = holder1[1];
     onlineCourses = holder1[2];
-
-    //console.log('conflictCounterForSections');
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
-    //console.log('countTimeConflicts');
+	console.log("after initializeConflictCounterForSections:"+potentialCourses.length);
 	conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
-    //console.log('selectSections');
+	console.log("after countTimeConflicts:"+potentialCourses.length);
 	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
-    //console.log('prepNextIteration');
-
+	console.log("after selectSections:"+potentialCourses.length);
 	var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
-    
+    console.log("after prepNextIteration:"+potentialCourses.length);
     term = holder2[0];
     completeCourses = holder2[1];
     incompleteCourses = holder2[2];
