@@ -296,6 +296,7 @@ var removeIncompletePrerequisiteCourses = function(potentialCourses, completeCou
     var j;
     var k;
     var completedPrerequisites = 0;
+    var coursesToRemove = [];
     
     for(i = 0; i < potentialCourses.length; i++)
     {
@@ -308,13 +309,15 @@ var removeIncompletePrerequisiteCourses = function(potentialCourses, completeCou
                     completedPrerequisites++;
                 }
             }
-            if(completedPrerequisites != potentialCourses[i].prerequisites.length)
-            {
-                potentialCourses.splice(i, 1)
-                i--;
-            }
         }
+        if(completedPrerequisites != potentialCourses[i].prerequisites.length)
+        {
+            potentialCourses.splice(i, 1);
+            i--;
+        }
+        completedPrerequisites = 0;
     }
+
     return potentialCourses;
 }
 
@@ -1717,7 +1720,7 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     return holder;
 }
 
-function sequencer(semesters)
+exports.sequencer = function(semesters)
 {
     var i;
     var j;
@@ -1823,13 +1826,10 @@ while(incompleteCourses.length > 0)
 
 	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
 
-
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
-	console.log("after selectCoursesForSemester:"+potentialCourses.length);
     lowPriorityCourses = holder1[0];
     potentialCourses = holder1[1];
     onlineCourses = holder1[2];
-
 
 	conflictCounterForSections = initializeConflictCounterForSections(term, potentialCourses);
 
@@ -1838,8 +1838,6 @@ while(incompleteCourses.length > 0)
 	potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
 
 	var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
-    
-    console.log("run #" + semesterCounter + '\n' + potentialCourses.length);
 
     term = holder2[0];
     completeCourses = holder2[1];
@@ -1853,6 +1851,7 @@ while(incompleteCourses.length > 0)
 
     semesterCounter++;
     console.log('exiting loop');
+    console.log(completeCourses.length);
 }
 return semesters;
 }
