@@ -66,6 +66,9 @@ module.exports = function(app)
 			electives : req.body["electives"],
 			completed : req.body["completed"]
 		});*/
+		var semesters = SG.generator(req.body['starting_semester'],req.body['summer_opt'],
+			SG.parseToJson(req.body["electives"], req.body["completed"]),SG.exportCompletedCourseIDs(req.body["completed"]));
+		console.log(SG.sequencer(semesters));
 	});
 
 	app.get('/change', function(req, res)

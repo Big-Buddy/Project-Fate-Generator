@@ -218,17 +218,21 @@ exports.parseToJson = function(electives, completed)
 
 //Takes as parameters the type of semester, the list of all incomplete courses and
 //an empty potential course list and populates it with courses that are offered in the same term
-var addToPotentialList = function(term, incompleteCourses, potentialCourses)
+var addToPotentialList = function(term, incompleteCourses, StubPotentialCourses)
 {
     var i;
     var j;
-    
+    var potentialCourses=StubPotentialCourses;
+    console.log(incompleteCourses.length);
+    console.log("term"+term);
+    console.log("blbabla"+incompleteCourses[0].lectureSections[0].semester);
     for(i = 0; i < incompleteCourses.length; i++)
     {
         for(j = 0; j < incompleteCourses[i].lectureSections.length; j++)
         {
-            if(incompleteCourses[i].lectureSections[j].semester == term)
+            if(incompleteCourses[i].lectureSections[j].semester.toLowerCase() == term.toLowerCase())
             {
+            	console.log("inside");
                 potentialCourses.push(JSON.parse(JSON.stringify(incompleteCourses[i])));
                 break;
             }
@@ -1818,15 +1822,18 @@ var semesterCounter = 0;
 while(incompleteCourses.length > 0)
 {
     console.log('entering loop');
-    console.log(potentialCourses.length);
+    console.log("before:"+potentialCourses.length);
     //console.log('addToPotentialList');
 	potentialCourses = addToPotentialList(term, incompleteCourses, potentialCourses);
+	console.log("after:"+potentialCourses.length);
     //console.log('remove400LevelCourses');
 	potentialCourses = remove400LevelCourses(potentialCourses, incompleteCourses);
+	//console.log(potentialCourses.length);
     //console.log('removeIncompletePrerequisiteCourses');
 	potentialCourses = removeIncompletePrerequisiteCourses(potentialCourses, completeCourses);
+	//console.log(potentialCourses.length);
     //console.log('sortPotentialList');
-	potentialCourses = sortPotentialList(potentialCourses, lowPriorityCourses);
+	//potentialCourses = sortPotentialList(potentialCourses, lowPriorityCourses);
     //console.log('selectCoursesForSemester');
 
 	var holder1 = selectCoursesForSemester(coursesPerSemester, onlineCourses, potentialCourses, lowPriorityCourses);
