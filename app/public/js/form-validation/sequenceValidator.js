@@ -15,7 +15,7 @@ function sequenceValidator()
 		return $('.general:checked').length >= 1;
 	}
 
-	this.validateScience = function()
+	this.validateProgram = function()
 	{
 		return $('.program:checked').length >= 5;
 	}
@@ -63,7 +63,7 @@ sequenceValidator.prototype.validateForm = function()
 		alert('You need to select at least one general elective.');
 		return false;
 	}
-	else if (this.validateScience() == false)
+	else if (this.validateProgram() == false)
 	{
 		alert('You need to select at least five program electives.');
 		return false;

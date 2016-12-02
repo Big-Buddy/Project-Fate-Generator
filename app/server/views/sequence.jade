@@ -5,6 +5,7 @@ html
 		script(type='text/javascript', src='/vendor/jquery.min.js')
 		script(type='text/javascript', src='/vendor/jquery.form.min.js')
 		script(type='text/javascript', src='/vendor/bootstrap.min.js')
+		script(type='text/javascript', src='/js/controllers/sequenceController.js')
 
 	body
 		block content
@@ -20,25 +21,44 @@ html
 			div.body-container
 				div.container
 					div.row
-						div.col-md-12
-							h2 Behold, your sequence!
-					div.column
-						ul.list-group
-							each item in sequenceData
-								div.col-md-6.col-sm-12
+						div.col-md-8.col-md-offset-1
+							div.panel
+								div.intro-message.panel-outer-heading(style='text-align:center;')
+									h2 Behold, your sequence!
+								div.panel-body
 									ul.list-group
-										if item[1].semester=="Winter"
-											li.list-group-item-info
-												label=item[1].semester+" semester #"+item[0].id+":"
-													each course in item[2].courses
-														li.list-group-item-danger(name= "listItem", id="elective")
-															label=course.course_program+course.course_number+" "+course.course_name+"\n"
-										else
-											li.list-group-item-warning
-												label=item[1].semester+" semester #"+item[0].id+":"
-													each course in item[2].courses
-														li.list-group-item-danger(name= "listItem", id="elective")
-															label=course.course_program+course.course_number+" "+course.course_name+"\n"
+										each item in sequenceData
+												ul.list-group
+													if (item[1].semester == 'Fall')
+														li.list-group-item(style='background-color: #ff4733; color: white;')
+															label=item[0].id + ". " + item[1].semester
+																if (item[2].courses.length == 0)
+																	li.list-group-item
+																		label='No courses for this semester!'
+																else
+																	each course in item[2].courses
+																		li.list-group-item(name= "listItem")
+																			label=course.course_program+course.course_number+" "+course.course_name+"\n"
+													else if (item[1].semester == 'Winter')
+														li.list-group-item(style='background-color: #42b4e6; color: white;')
+															label=item[0].id + ". " + item[1].semester
+																if (item[2].courses.length == 0)
+																	li.list-group-item
+																		label='No courses for this semester!'
+																else
+																	each course in item[2].courses
+																		li.list-group-item(name= "listItem")
+																			label=course.course_program+course.course_number+" "+course.course_name+"\n"
+													else if (item[1].semester == 'Summer')
+														li.list-group-item(style='background-color: #ffb246; color: white;')
+															label=item[0].id + ". " + item[1].semester
+																if (item[2].courses.length == 0)
+																	li.list-group-item
+																		label='No courses for this semester!'
+																else
+																	each course in item[2].courses
+																		li.list-group-item(name= "listItem")
+																			label=course.course_program+course.course_number+" "+course.course_name+"\n"
 						<!--Data goes here!-->
 						<!--Every two semester GENERATE div.clearfix.visible-md-block-->
 						<!--For each semester GENERATE div.col-md-6.col-sm-12 + ul.list-group-->

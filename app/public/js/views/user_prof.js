@@ -23,7 +23,6 @@ $(document).ready(function()
 		{
 			if (status == 'success')
 			{
-				console.log("in succes");
 				window.location.href = '/sequence';
 			}
 		},

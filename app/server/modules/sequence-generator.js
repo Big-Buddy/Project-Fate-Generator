@@ -1768,7 +1768,7 @@ var sequencer = function(semesters, term, summer)
     
     for (semester in semesters)
     {
-        var number = semester;
+        var number = parseInt(semester) + 1;
         var season;
 
         season = semesterLabels[semester];
