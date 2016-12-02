@@ -153,7 +153,7 @@ var compileCourseListByCourseID= function(CourseID, JSONArray){
 	var courseListByCourseID=[];
 	for(course in JSONArray){
 		for(id in CourseID){
-			if(JSONArray[course].courseID==CourseID[id])
+			if(JSONArray[course].id==CourseID[id])
 				courseListByCourseID.push(JSONArray[course])
 			}
 	}
@@ -1637,12 +1637,12 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     for(i = 0; i < potentialCourseSections.length; i++)
     {
         //semesters.push(JSON.parse(JSON.stringify(potentialCourseSections[i])));
-        semesterArray.push(JSON.parse(JSON.stringify(potentialCourseSections[i])));
-        completeCourses.push(potentialCourseSections[i].id);
+        semesterArray.push(JSON.parse(JSON.stringify(potentialCourses[i])));
+        completeCourses.push(potentialCourses[i].id);
         
         for(j = 0; j < incompleteCourses.length; j++)
         {
-            if(potentialCourseSections[i].course_program.concat(potentialCourseSections[i].course_number) == incompleteCourses[j].course_program.concat(incompleteCourses[j].course_number))
+            if(potentialCourses[i].course_program.concat(potentialCourses[i].course_number) == incompleteCourses[j].course_program.concat(incompleteCourses[j].course_number))
             {
                 incompleteCourses.splice(j, 1);
                 break;
@@ -1703,14 +1703,14 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     {
         lowPriorityCourses.pop();
     }
-    while(potentialCourseSections.length > 0)
+    /*while(potentialCourseSections.length > 0)
     {
         potentialCourseSections.pop();
     }
     while(conflictCounterForSections.length > 0)
     {
         conflictCounterForSections.pop();
-    }
+    }*/
     
     var holder = [];
     holder.push(term);
@@ -1720,8 +1720,8 @@ var prepNextIteration = function(semesterCounter, term, summer, onlineCourses, s
     holder.push(onlineCourses);
     holder.push(lowPriorityCourses);
     holder.push(potentialCourses);
-    holder.push(potentialCourseSections);
-    holder.push(conflictCounterForSections);
+    //holder.push(potentialCourseSections);
+    //holder.push(conflictCounterForSections);
     return holder;
 }
 
@@ -1891,9 +1891,9 @@ exports.generator = function(term, summerOption, incompleteCourses, completeCour
 
         conflictCounterForSections = countTimeConflicts(term, potentialCourses, conflictCounterForSections);
 
-        potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
+        //potentialCourseSections = selectSections(coursesPerSemester, potentialCourses, conflictCounterForSections, potentialCourseSections);
 
-        var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses, potentialCourseSections, conflictCounterForSections);
+        var holder2 = prepNextIteration(semesterCounter, term, summer, onlineCourses, semesters, incompleteCourses, completeCourses, potentialCourses, lowPriorityCourses,conflictCounterForSections);
 
         term = holder2[0];
         completeCourses = holder2[1];
